@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: coke_logger_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/coke_logger_db
+
+volumes:
+  postgres_data:
