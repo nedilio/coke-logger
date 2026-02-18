@@ -80,6 +80,7 @@ export async function getPublicCokeLogsAction(limit: number = 50) {
         columns: {
           id: true,
           username: true,
+          displayUsername: true,
           image: true,
         },
       },

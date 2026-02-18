@@ -1,14 +1,12 @@
 "use server";
 
-import { db } from "@/db/drizzle";
-import { user } from "@/db/schemas";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { eq } from "drizzle-orm";
-import { validateUsername } from "@/lib/validations/username";
 import { revalidatePath } from "next/cache";
 
 // Update username for current user
+// Note: Better Auth's username plugin provides built-in updateUser method
+// This action wraps it for convenience and adds revalidation
 export async function updateUsernameAction(newUsername: string) {
   // Authenticate
   const session = await auth.api.getSession({ headers: await headers() });
@@ -16,18 +14,13 @@ export async function updateUsernameAction(newUsername: string) {
     throw new Error("Unauthorized");
   }
 
-  // Validate username
-  const validation = await validateUsername(newUsername, session.user.id);
-  if (!validation.success) {
-    throw new Error(validation.error);
-  }
-
-  // Update in database
-  const [updatedUser] = await db
-    .update(user)
-    .set({ username: newUsername })
-    .where(eq(user.id, session.user.id))
-    .returning();
+  // Use Better Auth's built-in updateUser method
+  const updatedUser = await auth.api.updateUser({
+    headers: await headers(),
+    body: {
+      username: newUsername,
+    },
+  });
 
   // Revalidate relevant pages
   revalidatePath("/settings");
@@ -37,16 +30,13 @@ export async function updateUsernameAction(newUsername: string) {
 }
 
 // Check if username is available
+// Note: Better Auth provides auth.api.isUsernameAvailable
 export async function checkUsernameAvailabilityAction(username: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  
-  const validation = await validateUsername(
-    username, 
-    session?.user?.id
-  );
+  const response = await auth.api.isUsernameAvailable({
+    body: {
+      username,
+    },
+  });
 
-  return {
-    available: validation.success,
-    message: validation.success ? "Username is available" : validation.error,
-  };
+  return response;
 }
