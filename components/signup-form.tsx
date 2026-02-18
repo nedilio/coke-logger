@@ -59,7 +59,9 @@ export function SignUpForm({
               </FieldSeparator>
               */}
               <Field>
-                <FieldLabel htmlFor="name" className="text-white">Nombre</FieldLabel>
+                <FieldLabel htmlFor="name" className="text-white">
+                  Nombre
+                </FieldLabel>
                 <Input
                   id="name"
                   name="name"
@@ -69,7 +71,9 @@ export function SignUpForm({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="username" className="text-white">Usuario</FieldLabel>
+                <FieldLabel htmlFor="username" className="text-white">
+                  Usuario
+                </FieldLabel>
                 <Input
                   id="username"
                   name="username"
@@ -79,7 +83,9 @@ export function SignUpForm({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="email" className="text-white">Email</FieldLabel>
+                <FieldLabel htmlFor="email" className="text-white">
+                  Email
+                </FieldLabel>
                 <Input
                   id="email"
                   name="email"
@@ -89,14 +95,21 @@ export function SignUpForm({
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="password" className="text-white">Contraseña</FieldLabel>
+                <FieldLabel htmlFor="password" className="text-white">
+                  Contraseña
+                </FieldLabel>
                 <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit" className="w-full">Crear Cuenta</Button>
+                <Button type="submit" className="w-full">
+                  Crear Cuenta
+                </Button>
                 <FieldDescription className="text-center text-white/90">
                   ¿Ya tienes cuenta?{" "}
-                  <Link href="/login" className="text-white underline hover:text-white/70 transition-colors">
+                  <Link
+                    href="/login"
+                    className="text-white underline hover:!text-white/70 transition-colors"
+                  >
                     Inicia sesión
                   </Link>
                 </FieldDescription>
@@ -107,13 +120,20 @@ export function SignUpForm({
       </Card>
       <FieldDescription className="px-6 text-center text-white/70 text-xs">
         Al continuar, aceptas nuestros{" "}
-        <Link href="/terms" className="text-white/90 underline hover:text-white transition-colors">
+        <Link
+          href="/terms"
+          className="text-white/90 underline hover:!text-white transition-colors"
+        >
           Términos de Servicio
         </Link>{" "}
         y{" "}
-        <Link href="/privacy" className="text-white/90 underline hover:text-white transition-colors">
+        <Link
+          href="/privacy"
+          className="text-white/90 underline hover:!text-white transition-colors"
+        >
           Política de Privacidad
-        </Link>.
+        </Link>
+        .
       </FieldDescription>
     </div>
   );
