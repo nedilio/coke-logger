@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, PlusCircle, User, LogOut } from "lucide-react";
@@ -14,6 +15,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { signOutAction } from "@/server/users";
@@ -24,6 +26,14 @@ interface AppSidebarProps {
 
 export function AppSidebar({ username }: AppSidebarProps) {
   const pathname = usePathname();
+  const { setOpenMobile, isMobile } = useSidebar();
+
+  // Close mobile sidebar when navigating to a new page
+  useEffect(() => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  }, [pathname, isMobile, setOpenMobile]);
 
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
