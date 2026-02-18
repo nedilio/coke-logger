@@ -29,6 +29,7 @@ export async function createCokeLogAction(data: unknown) {
 
   // 4. Revalidate cache
   revalidatePath("/dashboard");
+  revalidatePath("/create");
 
   return newLog;
 }
@@ -46,6 +47,46 @@ export async function getCokeLogsAction() {
   });
 
   return logs;
+}
+
+// READ - Dashboard statistics
+export async function getDashboardStatsAction() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  const logs = await db.query.cokeLog.findMany({
+    where: eq(cokeLog.userId, session.user.id),
+  });
+
+  // Total logs
+  const totalLogs = logs.length;
+
+  // Logs this week
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const logsThisWeek = logs.filter(log => new Date(log.consumedAt) >= oneWeekAgo).length;
+
+  // Favorite coke type (mode)
+  const typeCount = logs.reduce((acc, log) => {
+    acc[log.cokeType] = (acc[log.cokeType] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const favoriteType = Object.entries(typeCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "None";
+
+  // Favorite size (mode)
+  const sizeCount = logs.reduce((acc, log) => {
+    acc[log.sizeML] = (acc[log.sizeML] || 0) + 1;
+    return acc;
+  }, {} as Record<number, number>);
+  const favoriteSizeML = Number(Object.entries(sizeCount).sort((a, b) => b[1] - a[1])[0]?.[0]) || 0;
+
+  return {
+    totalLogs,
+    logsThisWeek,
+    favoriteType,
+    favoriteSizeML,
+  };
 }
 
 // READ - Get single log by ID

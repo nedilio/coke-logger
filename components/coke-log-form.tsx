@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   Card,
@@ -33,6 +34,7 @@ interface FormData {
 }
 
 export function CokeLogForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     cokeType: null,
     format: null,
@@ -119,6 +121,9 @@ export function CokeLogForm() {
         isPublic: false,
       });
       setErrors({});
+
+      // Redirect to dashboard
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error creating log:", error);
       toast.error(

@@ -33,3 +33,7 @@ export const cokeLogRelations = relations(cokeLog, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+// Export types for use in components
+export type CokeLog = typeof cokeLog.$inferSelect;
+export type NewCokeLog = typeof cokeLog.$inferInsert;
