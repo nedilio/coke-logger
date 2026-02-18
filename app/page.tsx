@@ -1,18 +1,34 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { redirectIfAuthenticated } from "@/lib/auth-helpers";
+import { BubblesBg } from "@/components/landing/bubbles-bg";
+import { HeroSection } from "@/components/landing/hero-section";
+import { FeaturesSection } from "@/components/landing/features-section";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { CTASection } from "@/components/landing/cta-section";
+import { Footer } from "@/components/landing/footer";
 
-export default function Home() {
+export const metadata = {
+  title: "Coke Logger - Trackea tu consumo de Coca-Cola",
+  description: "La app definitiva para saber cuánta Coca-Cola tomas realmente. Registra cada lata, botella o vaso. Obtén estadísticas increíbles.",
+  keywords: ["coca-cola", "tracking", "estadísticas", "consumo"],
+  openGraph: {
+    title: "Coke Logger - Trackea tu consumo de Coca-Cola",
+    description: "Registra cada Coca-Cola que tomas y descubre tus patrones de consumo",
+    type: "website",
+  },
+};
+
+export default async function Home() {
+  // Redirect authenticated users to dashboard
+  await redirectIfAuthenticated();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted font-sans">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-card sm:items-start">
-        <h1 className="text-6xl font-bold">Coke Logger</h1>
-        <Button asChild variant="link">
-          <Link href="/signup">Don&apos;t have an account? Sign up</Link>
-        </Button>
-        <Button asChild variant="link">
-          <Link href="/login">Already have an account? Log in</Link>
-        </Button>
-      </main>
+    <div className="relative min-h-screen gradient-bg overflow-x-hidden text-white">
+      <BubblesBg />
+      <HeroSection />
+      <FeaturesSection />
+      <HowItWorks />
+      <CTASection />
+      <Footer />
     </div>
   );
 }

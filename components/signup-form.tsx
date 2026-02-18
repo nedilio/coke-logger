@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,6 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { signUpAction } from "@/server/users";
@@ -23,16 +23,17 @@ export function SignUpForm({
 }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="glass-effect border-white/20">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Create an account</CardTitle>
-          <CardDescription>
-            Login with your Apple or Google account
+          <CardTitle className="text-xl text-white">Crea tu cuenta</CardTitle>
+          <CardDescription className="text-red-100">
+            Empieza a trackear tu consumo de Coca-Cola
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={signUpAction}>
             <FieldGroup>
+              {/* OAuth temporalmente oculto - implementar después
               <Field>
                 <Button variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -56,28 +57,29 @@ export function SignUpForm({
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
               </FieldSeparator>
+              */}
               <Field>
-                <FieldLabel htmlFor="name">Name</FieldLabel>
+                <FieldLabel htmlFor="name" className="text-white">Nombre</FieldLabel>
                 <Input
                   id="name"
                   name="name"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Juan Pérez"
                   required
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="username">Username</FieldLabel>
+                <FieldLabel htmlFor="username" className="text-white">Usuario</FieldLabel>
                 <Input
                   id="username"
                   name="username"
                   type="text"
-                  placeholder="johndoe"
+                  placeholder="juanperez"
                   required
                 />
               </Field>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email" className="text-white">Email</FieldLabel>
                 <Input
                   id="email"
                   name="email"
@@ -87,30 +89,31 @@ export function SignUpForm({
                 />
               </Field>
               <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
+                <FieldLabel htmlFor="password" className="text-white">Contraseña</FieldLabel>
                 <Input id="password" name="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
-                <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                <Button type="submit" className="w-full">Crear Cuenta</Button>
+                <FieldDescription className="text-center text-red-100">
+                  ¿Ya tienes cuenta?{" "}
+                  <Link href="/login" className="underline hover:text-white transition-colors">
+                    Inicia sesión
+                  </Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+      <FieldDescription className="px-6 text-center text-red-200 text-xs">
+        Al continuar, aceptas nuestros{" "}
+        <Link href="/terms" className="underline hover:text-white transition-colors">
+          Términos de Servicio
+        </Link>{" "}
+        y{" "}
+        <Link href="/privacy" className="underline hover:text-white transition-colors">
+          Política de Privacidad
+        </Link>.
       </FieldDescription>
     </div>
   );

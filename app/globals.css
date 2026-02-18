@@ -124,3 +124,101 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ============================================
+   LANDING PAGE ANIMATIONS & EFFECTS
+   ============================================ */
+
+/* Gradient background for landing */
+.gradient-bg {
+  background: linear-gradient(
+    135deg,
+    oklch(47.747% 0.19594 29.223) 0%,
+    oklch(0.45 0.25 25) 50%,
+    oklch(0.35 0.20 25) 100%
+  );
+  font-family: var(--font-poppins), var(--font-geist-sans), sans-serif;
+}
+
+/* Glass effect for cards */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Float animation for hero icon */
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Shine effect for buttons */
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Bubble animation */
+.bubble {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  animation: rise 4s infinite ease-in;
+  pointer-events: none;
+}
+
+@keyframes rise {
+  0% {
+    bottom: -100px;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    bottom: 100%;
+    opacity: 0;
+  }
+}
+
+/* Responsive text adjustments */
+@media (max-width: 640px) {
+  .gradient-bg h1 {
+    font-size: 2.5rem;
+  }
+}

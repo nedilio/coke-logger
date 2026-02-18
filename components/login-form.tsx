@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,6 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { signInAction } from "@/server/users";
@@ -23,16 +23,17 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="glass-effect border-white/20">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>
-            Login with your Apple or Google account
+          <CardTitle className="text-xl text-white">Bienvenido de vuelta</CardTitle>
+          <CardDescription className="text-red-100">
+            Ingresa a tu cuenta de Coke Logger
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={signInAction}>
             <FieldGroup>
+              {/* OAuth temporalmente oculto - implementar después
               <Field>
                 <Button variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -56,8 +57,9 @@ export function LoginForm({
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
               </FieldSeparator>
+              */}
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email" className="text-white">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -68,29 +70,38 @@ export function LoginForm({
               </Field>
               <Field>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-4 hover:underline"
+                  <FieldLabel htmlFor="password" className="text-white">Contraseña</FieldLabel>
+                  <Link 
+                    href="/forgot-password" 
+                    className="ml-auto text-sm text-red-200 underline-offset-4 hover:underline hover:text-white transition-colors"
                   >
-                    Forgot your password?
-                  </a>
+                    ¿Olvidaste tu contraseña?
+                  </Link>
                 </div>
                 <Input id="password" type="password" name="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
-                <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                <Button type="submit" className="w-full">Iniciar Sesión</Button>
+                <FieldDescription className="text-center text-red-100">
+                  ¿No tienes cuenta?{" "}
+                  <Link href="/signup" className="underline hover:text-white transition-colors">
+                    Regístrate
+                  </Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+      <FieldDescription className="px-6 text-center text-red-200 text-xs">
+        Al continuar, aceptas nuestros{" "}
+        <Link href="/terms" className="underline hover:text-white transition-colors">
+          Términos de Servicio
+        </Link>{" "}
+        y{" "}
+        <Link href="/privacy" className="underline hover:text-white transition-colors">
+          Política de Privacidad
+        </Link>.
       </FieldDescription>
     </div>
   );
