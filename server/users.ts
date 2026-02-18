@@ -8,28 +8,27 @@ export const signUpAction = async (formData: FormData) => {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const username = formData.get("username") as string;
+  let username = formData.get("username") as string;
 
   if (!username) {
-    const defaultUsername = email.split("@")[0].toLowerCase();
-    formData.set("username", defaultUsername);
+    username = email.split("@")[0].toLowerCase();
   }
 
   try {
-    // Better Auth's username plugin handles username validation and creation
     await auth.api.signUpEmail({
       body: {
         name,
         email,
         password,
-        username, // Username plugin handles this automatically
+        username,
       },
     });
-    redirect("/dashboard");
   } catch (error) {
     console.error("Sign up error:", error);
     throw error;
   }
+
+  redirect("/dashboard");
 };
 
 export const signInAction = async (formData: FormData) => {
@@ -38,20 +37,21 @@ export const signInAction = async (formData: FormData) => {
 
   try {
     await auth.api.signInEmail({ body: { email, password } });
-    redirect("/dashboard");
-    // Let middleware handle redirect to dashboard
   } catch (error) {
     console.error("Sign in error:", error);
     throw error;
   }
+
+  redirect("/dashboard");
 };
 
 export const signOutAction = async () => {
   try {
     await auth.api.signOut({ headers: await headers() });
-    redirect("/login");
   } catch (error) {
     console.error("Sign out error:", error);
     throw error;
   }
+
+  redirect("/login");
 };
