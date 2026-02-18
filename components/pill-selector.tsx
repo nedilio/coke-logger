@@ -43,12 +43,12 @@ export function PillSelector({
               aria-checked={isSelected}
               onClick={() => onChange(option.value)}
               className={cn(
-                "flex-1 min-w-[80px] px-4 py-2 rounded-full text-sm font-medium transition-all",
+                "flex-1 min-w-20 px-4 py-2 rounded-full text-sm font-medium transition-all",
                 "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 "outline-none",
                 isSelected
                   ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
               )}
             >
               {option.label}
