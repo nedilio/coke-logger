@@ -17,8 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { signUpAction } from "@/server/users";
 
-
-
 export function SignUpForm({
   className,
   ...props
@@ -60,7 +58,23 @@ export function SignUpForm({
               </FieldSeparator>
               <Field>
                 <FieldLabel htmlFor="name">Name</FieldLabel>
-                <Input id="name" name="name" type="text" placeholder="John Doe" required />
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="John Doe"
+                  required
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="username">Username</FieldLabel>
+                <Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  placeholder="johndoe"
+                  required
+                />
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>

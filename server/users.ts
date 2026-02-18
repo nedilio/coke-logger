@@ -10,6 +10,11 @@ export const signUpAction = async (formData: FormData) => {
   const password = formData.get("password") as string;
   const username = formData.get("username") as string;
 
+  if (!username) {
+    const defaultUsername = email.split("@")[0].toLowerCase();
+    formData.set("username", defaultUsername);
+  }
+
   try {
     // Better Auth's username plugin handles username validation and creation
     await auth.api.signUpEmail({
