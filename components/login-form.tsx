@@ -26,13 +26,13 @@ export function LoginForm({
       <Card className="glass-effect border-white/20">
         <CardHeader className="text-center">
           <CardTitle className="text-xl text-white">Bienvenido de vuelta</CardTitle>
-          <CardDescription className="text-red-100">
+          <CardDescription className="text-white/90">
             Ingresa a tu cuenta de Coke Logger
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={signInAction}>
-            <FieldGroup>
+            <FieldGroup className="[&_input::placeholder]:text-white/60">
               {/* OAuth temporalmente oculto - implementar después
               <Field>
                 <Button variant="outline" type="button">
@@ -73,7 +73,7 @@ export function LoginForm({
                   <FieldLabel htmlFor="password" className="text-white">Contraseña</FieldLabel>
                   <Link 
                     href="/forgot-password" 
-                    className="ml-auto text-sm text-red-200 underline-offset-4 hover:underline hover:text-white transition-colors"
+                    className="ml-auto text-sm text-white/80 underline-offset-4 hover:underline hover:text-white transition-colors"
                   >
                     ¿Olvidaste tu contraseña?
                   </Link>
@@ -82,9 +82,9 @@ export function LoginForm({
               </Field>
               <Field>
                 <Button type="submit" className="w-full">Iniciar Sesión</Button>
-                <FieldDescription className="text-center text-red-100">
+                <FieldDescription className="text-center text-white/90">
                   ¿No tienes cuenta?{" "}
-                  <Link href="/signup" className="underline hover:text-white transition-colors">
+                  <Link href="/signup" className="text-white underline hover:text-white/70 transition-colors">
                     Regístrate
                   </Link>
                 </FieldDescription>
@@ -93,13 +93,13 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center text-red-200 text-xs">
+      <FieldDescription className="px-6 text-center text-white/70 text-xs">
         Al continuar, aceptas nuestros{" "}
-        <Link href="/terms" className="underline hover:text-white transition-colors">
+        <Link href="/terms" className="text-white/90 underline hover:text-white transition-colors">
           Términos de Servicio
         </Link>{" "}
         y{" "}
-        <Link href="/privacy" className="underline hover:text-white transition-colors">
+        <Link href="/privacy" className="text-white/90 underline hover:text-white transition-colors">
           Política de Privacidad
         </Link>.
       </FieldDescription>

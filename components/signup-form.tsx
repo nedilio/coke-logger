@@ -26,13 +26,13 @@ export function SignUpForm({
       <Card className="glass-effect border-white/20">
         <CardHeader className="text-center">
           <CardTitle className="text-xl text-white">Crea tu cuenta</CardTitle>
-          <CardDescription className="text-red-100">
+          <CardDescription className="text-white/90">
             Empieza a trackear tu consumo de Coca-Cola
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={signUpAction}>
-            <FieldGroup>
+            <FieldGroup className="[&_input::placeholder]:text-white/60">
               {/* OAuth temporalmente oculto - implementar después
               <Field>
                 <Button variant="outline" type="button">
@@ -94,9 +94,9 @@ export function SignUpForm({
               </Field>
               <Field>
                 <Button type="submit" className="w-full">Crear Cuenta</Button>
-                <FieldDescription className="text-center text-red-100">
+                <FieldDescription className="text-center text-white/90">
                   ¿Ya tienes cuenta?{" "}
-                  <Link href="/login" className="underline hover:text-white transition-colors">
+                  <Link href="/login" className="text-white underline hover:text-white/70 transition-colors">
                     Inicia sesión
                   </Link>
                 </FieldDescription>
@@ -105,13 +105,13 @@ export function SignUpForm({
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center text-red-200 text-xs">
+      <FieldDescription className="px-6 text-center text-white/70 text-xs">
         Al continuar, aceptas nuestros{" "}
-        <Link href="/terms" className="underline hover:text-white transition-colors">
+        <Link href="/terms" className="text-white/90 underline hover:text-white transition-colors">
           Términos de Servicio
         </Link>{" "}
         y{" "}
-        <Link href="/privacy" className="underline hover:text-white transition-colors">
+        <Link href="/privacy" className="text-white/90 underline hover:text-white transition-colors">
           Política de Privacidad
         </Link>.
       </FieldDescription>
