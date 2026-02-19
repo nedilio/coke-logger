@@ -22,7 +22,7 @@ export default async function DashboardPage() {
           <Button asChild size="default">
             <Link href="/create">
               <PlusCircle className="h-4 w-4 mr-2" />
-              Add New Entry
+              Agregar registro
             </Link>
           </Button>
         }

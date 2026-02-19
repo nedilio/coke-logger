@@ -37,8 +37,8 @@ export function AppSidebar({ username }: AppSidebarProps) {
 
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
-    { href: "/create", label: "Add Entry", icon: PlusCircle },
-    { href: "/profile", label: "Profile", icon: User },
+    { href: "/create", label: "Agregar Entrada", icon: PlusCircle },
+    { href: "/profile", label: "Perfil", icon: User },
   ];
 
   return (
@@ -51,7 +51,7 @@ export function AppSidebar({ username }: AppSidebarProps) {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Navegación</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
@@ -77,7 +77,7 @@ export function AppSidebar({ username }: AppSidebarProps) {
       <SidebarFooter>
         <div className="p-4 space-y-2">
           <p className="text-sm text-muted-foreground">
-            Logged in as <span className="font-medium">{username}</span>
+            Conectado como <span className="font-medium">{username}</span>
           </p>
           <form action={signOutAction} className="w-full">
             <Button variant="outline" size="sm" className="w-full">
