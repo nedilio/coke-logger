@@ -46,9 +46,8 @@ export function CokeLogForm() {
     showCustomDateTime: false,
     customDateTimeInput: "",
     notes: "",
-    isPublic: false,
+    isPublic: true,
   });
-  console.log({ formData });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,25 +56,25 @@ export function CokeLogForm() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.cokeType) {
-      newErrors.cokeType = "Please select a coke type";
+      newErrors.cokeType = "Por favor selecciona un tipo de Coca-Cola";
     }
 
     if (!formData.format) {
-      newErrors.format = "Please select a format";
+      newErrors.format = "Por favor selecciona un formato";
     }
 
     if (!formData.sizeML) {
-      newErrors.sizeML = "Please select or enter a size";
+      newErrors.sizeML = "Por favor selecciona o ingresa un tamaño";
     } else if (formData.sizeML < 1) {
-      newErrors.sizeML = "Size must be at least 1ml";
+      newErrors.sizeML = "El tamaño debe ser al menos 1ml";
     } else if (formData.sizeML > 10000) {
-      newErrors.sizeML = "Size cannot exceed 10000ml (10L)";
+      newErrors.sizeML = "El tamaño no puede exceder 10000ml (10L)";
     }
 
     if (!formData.consumedAt) {
-      newErrors.consumedAt = "Please select when you consumed it";
+      newErrors.consumedAt = "Por favor selecciona cuándo lo consumiste";
     } else if (formData.consumedAt > new Date()) {
-      newErrors.consumedAt = "Date cannot be in the future";
+      newErrors.consumedAt = "La fecha no puede estar en el futuro";
     }
 
     setErrors(newErrors);
@@ -86,7 +85,7 @@ export function CokeLogForm() {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error("Please fix the errors in the form");
+      toast.error("Por favor corrige los errores en el formulario");
       return;
     }
 
@@ -104,7 +103,7 @@ export function CokeLogForm() {
 
       await createCokeLogAction(data);
 
-      toast.success("Entry added successfully!");
+      toast.success("¡Entrada agregada exitosamente!");
 
       // Reset form
       setFormData({
@@ -139,15 +138,15 @@ export function CokeLogForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Add New Coke Entry</CardTitle>
-        <CardDescription>Track your Coca-Cola consumption</CardDescription>
+        <CardTitle>Agregar nuevo registro de Coca-Cola</CardTitle>
+        <CardDescription>Registra tu consumo de Coca-Cola</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
           <FieldGroup>
-            {/* Coke Type */}
+            {/* Tipo de Coca-Cola */}
             <Field>
-              <FieldLabel>Coke Type *</FieldLabel>
+              <FieldLabel>Tipo de Coca-Cola *</FieldLabel>
               <PillSelector
                 name="cokeType"
                 options={[
@@ -164,15 +163,15 @@ export function CokeLogForm() {
               />
             </Field>
 
-            {/* Format */}
+            {/* Formato */}
             <Field>
-              <FieldLabel>Format *</FieldLabel>
+              <FieldLabel>Formato *</FieldLabel>
               <PillSelector
                 name="format"
                 options={[
-                  { value: "glass", label: "Glass" },
-                  { value: "can", label: "Can" },
-                  { value: "plastic", label: "Plastic" },
+                  { value: "glass", label: "Vidrio" },
+                  { value: "can", label: "Lata" },
+                  { value: "plastic", label: "Plástico" },
                 ]}
                 value={formData.format}
                 onChange={(value) =>
@@ -183,9 +182,9 @@ export function CokeLogForm() {
               />
             </Field>
 
-            {/* Size ML */}
+            {/* Tamaño en ML */}
             <Field>
-              <FieldLabel>Size *</FieldLabel>
+              <FieldLabel>Tamaño *</FieldLabel>
               <PillSelector
                 name="size"
                 options={[
@@ -196,7 +195,7 @@ export function CokeLogForm() {
                   { value: "1000", label: "1L" },
                   { value: "1500", label: "1.5L" },
                   { value: "2000", label: "2L" },
-                  { value: "custom", label: "Custom" },
+                  { value: "custom", label: "Personalizado" },
                 ]}
                 value={
                   formData.showCustomSize
@@ -228,7 +227,7 @@ export function CokeLogForm() {
                     type="number"
                     min="1"
                     max="10000"
-                    placeholder="Enter ml"
+                    placeholder="Ingrese ml"
                     value={formData.customSizeInput}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -244,17 +243,17 @@ export function CokeLogForm() {
               )}
             </Field>
 
-            {/* Consumed At */}
+            {/* Consumido en */}
             <Field>
-              <FieldLabel>When did you drink it? *</FieldLabel>
+              <FieldLabel>¿Cuándo tomaste cokita? *</FieldLabel>
               <PillSelector
                 name="consumedAt"
                 options={[
-                  { value: "now", label: "Now" },
-                  { value: "1h", label: "1h ago" },
-                  { value: "2h", label: "2h ago" },
-                  { value: "3h", label: "3h ago" },
-                  { value: "custom", label: "Custom" },
+                  { value: "now", label: "Ahora" },
+                  { value: "1h", label: "Hace 1 hora" },
+                  { value: "2h", label: "Hace 2 horas" },
+                  { value: "3h", label: "Hace 3 horas" },
+                  { value: "custom", label: "Personalizado" },
                 ]}
                 value={formData.consumedAtQuickSelect}
                 onChange={(value) => {
@@ -266,9 +265,7 @@ export function CokeLogForm() {
                     });
                   } else {
                     const hoursAgo = value === "now" ? 0 : parseInt(value);
-                    console.log({ hoursAgo });
                     const date = new Date(Date.now() - hoursAgo * 3600000);
-                    console.log({ date });
                     setFormData({
                       ...formData,
                       consumedAtQuickSelect: value,
@@ -299,13 +296,13 @@ export function CokeLogForm() {
               )}
             </Field>
 
-            {/* Notes */}
+            {/* Notas */}
             <Field>
-              <FieldLabel htmlFor="notes">Notes (optional)</FieldLabel>
+              <FieldLabel htmlFor="notes">Notas (opcional)</FieldLabel>
               <Textarea
                 id="notes"
                 name="notes"
-                placeholder="Any notes about this drink..."
+                placeholder="Cualquier nota sobre esta bebida..."
                 value={formData.notes}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -317,15 +314,15 @@ export function CokeLogForm() {
                 rows={3}
               />
               <p className="text-xs text-muted-foreground text-right mt-1">
-                {formData.notes.length}/250 characters
+                {formData.notes.length}/250 caracteres
               </p>
             </Field>
 
-            {/* Is Public */}
+            {/* Es público */}
             <Field>
               <div className="flex items-center justify-between">
                 <FieldLabel htmlFor="isPublic" className="cursor-pointer">
-                  Make this entry public
+                  Hacer esta entrada pública
                 </FieldLabel>
                 <Switch
                   id="isPublic"
@@ -337,10 +334,10 @@ export function CokeLogForm() {
               </div>
             </Field>
 
-            {/* Submit Button */}
+            {/* Botón de envío */}
             <Field>
               <Button type="submit" disabled={isSubmitting} className="w-full">
-                {isSubmitting ? "Adding..." : "Add Entry"}
+                {isSubmitting ? "Agregando..." : "Agregar entrada"}
               </Button>
             </Field>
           </FieldGroup>
