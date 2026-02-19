@@ -5,11 +5,15 @@ interface DashboardStatsProps {
   logsThisWeek: number;
   favoriteType: string;
   favoriteSizeML: number;
+  mlThisWeek: number;
+  mlThisMonth: number;
 }
 
 export function DashboardStats({
   totalLogs,
   logsThisWeek,
+  mlThisWeek,
+  mlThisMonth,
   favoriteType,
   favoriteSizeML,
 }: DashboardStatsProps) {
@@ -18,29 +22,33 @@ export function DashboardStats({
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            Total Entries
+            Has registrado
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{totalLogs}</div>
+          <div className="text-2xl font-bold">{totalLogs} cokitas</div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            This Week
+            Esta semana tomaste
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{logsThisWeek}</div>
+          <div className="text-2xl font-bold">
+            {mlThisWeek > 1000
+              ? `${(mlThisWeek / 1000).toFixed(2)}L`
+              : `${mlThisWeek}ml`}
+          </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            Favorite Type
+            Eres fan de la cokita
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -51,12 +59,14 @@ export function DashboardStats({
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            Favorite Size
+            Este mes llevas consumidos
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {favoriteSizeML > 0 ? `${favoriteSizeML}ml` : "N/A"}
+            {mlThisMonth > 1000
+              ? `${(mlThisMonth / 1000).toFixed(2)}L`
+              : `${mlThisMonth}ml`}
           </div>
         </CardContent>
       </Card>

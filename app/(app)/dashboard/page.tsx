@@ -17,7 +17,7 @@ export default async function DashboardPage() {
     <div className="container mx-auto p-6 space-y-8">
       <AppHeader
         title="Dashboard"
-        description="Your Coca-Cola consumption overview"
+        description="Tus datos de consumo de cokita en un vistazo"
         actions={
           <Button asChild size="default">
             <Link href="/create">

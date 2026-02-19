@@ -5,7 +5,10 @@ import { db } from "@/db/drizzle";
 import { cokeLog } from "@/db/schemas";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { createCokeLogSchema, updateCokeLogSchema } from "@/lib/validations/coke-log";
+import {
+  createCokeLogSchema,
+  updateCokeLogSchema,
+} from "@/lib/validations/coke-log";
 import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -21,11 +24,14 @@ export async function createCokeLogAction(data: unknown) {
   const validatedData = createCokeLogSchema.parse(data);
 
   // 3. Insert into database
-  const [newLog] = await db.insert(cokeLog).values({
-    id: nanoid(),
-    userId: session.user.id,
-    ...validatedData,
-  }).returning();
+  const [newLog] = await db
+    .insert(cokeLog)
+    .values({
+      id: nanoid(),
+      userId: session.user.id,
+      ...validatedData,
+    })
+    .returning();
 
   // 4. Revalidate cache
   revalidatePath("/dashboard");
@@ -63,27 +69,75 @@ export async function getDashboardStatsAction() {
   // Total logs
   const totalLogs = logs.length;
 
-  // Logs this week
-  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const logsThisWeek = logs.filter(log => new Date(log.consumedAt) >= oneWeekAgo).length;
+  // Logs this week (Monday to Sunday)
+  const now = new Date();
+
+  // Calculate start of week (Monday)
+  const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, ...
+  const diffToMonday = currentDay === 0 ? 6 : currentDay - 1; // Days to subtract to get to Monday
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - diffToMonday);
+  weekStart.setHours(0, 0, 0, 0);
+
+  // Calculate end of week (Sunday)
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+
+  const logsThisWeek = logs.filter((log) => {
+    const logDate = new Date(log.consumedAt);
+    return logDate >= weekStart && logDate <= weekEnd;
+  }).length;
+
+  // Calculate liters this week
+  const mlThisWeek = logs
+    .filter((log) => {
+      const logDate = new Date(log.consumedAt);
+      return logDate >= weekStart && logDate <= weekEnd;
+    })
+    .reduce((sum, log) => sum + log.sizeML, 0);
+
+  // Calculate liters this month
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  monthEnd.setHours(23, 59, 59, 999);
+
+  const mlThisMonth = logs
+    .filter((log) => {
+      const logDate = new Date(log.consumedAt);
+      return logDate >= monthStart && logDate <= monthEnd;
+    })
+    .reduce((sum, log) => sum + log.sizeML, 0);
 
   // Favorite coke type (mode)
-  const typeCount = logs.reduce((acc, log) => {
-    acc[log.cokeType] = (acc[log.cokeType] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  const favoriteType = Object.entries(typeCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "None";
+  const typeCount = logs.reduce(
+    (acc, log) => {
+      acc[log.cokeType] = (acc[log.cokeType] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+  const favoriteType =
+    Object.entries(typeCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "None";
 
   // Favorite size (mode)
-  const sizeCount = logs.reduce((acc, log) => {
-    acc[log.sizeML] = (acc[log.sizeML] || 0) + 1;
-    return acc;
-  }, {} as Record<number, number>);
-  const favoriteSizeML = Number(Object.entries(sizeCount).sort((a, b) => b[1] - a[1])[0]?.[0]) || 0;
+  const sizeCount = logs.reduce(
+    (acc, log) => {
+      acc[log.sizeML] = (acc[log.sizeML] || 0) + 1;
+      return acc;
+    },
+    {} as Record<number, number>,
+  );
+  const favoriteSizeML =
+    Number(Object.entries(sizeCount).sort((a, b) => b[1] - a[1])[0]?.[0]) || 0;
+
+  // const grouped = Object.groupBy(logs, (log) => log.cokeType);
 
   return {
     totalLogs,
     logsThisWeek,
+    mlThisWeek,
+    mlThisMonth,
     favoriteType,
     favoriteSizeML,
   };
@@ -97,10 +151,7 @@ export async function getCokeLogByIdAction(logId: string) {
   }
 
   const log = await db.query.cokeLog.findFirst({
-    where: and(
-      eq(cokeLog.id, logId),
-      eq(cokeLog.userId, session.user.id)
-    ),
+    where: and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)),
   });
 
   if (!log) {
@@ -143,10 +194,7 @@ export async function updateCokeLogAction(logId: string, data: unknown) {
   const [updatedLog] = await db
     .update(cokeLog)
     .set(validatedData)
-    .where(and(
-      eq(cokeLog.id, logId),
-      eq(cokeLog.userId, session.user.id)
-    ))
+    .where(and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)))
     .returning();
 
   if (!updatedLog) {
@@ -167,10 +215,7 @@ export async function toggleCokeLogPrivacyAction(logId: string) {
 
   // First, get the current log
   const currentLog = await db.query.cokeLog.findFirst({
-    where: and(
-      eq(cokeLog.id, logId),
-      eq(cokeLog.userId, session.user.id)
-    ),
+    where: and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)),
   });
 
   if (!currentLog) {
@@ -181,10 +226,7 @@ export async function toggleCokeLogPrivacyAction(logId: string) {
   const [updatedLog] = await db
     .update(cokeLog)
     .set({ isPublic: !currentLog.isPublic })
-    .where(and(
-      eq(cokeLog.id, logId),
-      eq(cokeLog.userId, session.user.id)
-    ))
+    .where(and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)))
     .returning();
 
   revalidatePath("/dashboard");
@@ -202,10 +244,7 @@ export async function deleteCokeLogAction(logId: string) {
 
   const [deletedLog] = await db
     .delete(cokeLog)
-    .where(and(
-      eq(cokeLog.id, logId),
-      eq(cokeLog.userId, session.user.id)
-    ))
+    .where(and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)))
     .returning();
 
   if (!deletedLog) {
