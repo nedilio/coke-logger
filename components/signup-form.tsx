@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,16 +12,33 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { signUpAction } from "@/server/users";
+import { signUpAction, type SignUpResponse } from "@/server/users";
+import { useActionState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [state, action, pending] = useActionState<SignUpResponse, FormData>(
+    signUpAction,
+    { error: undefined },
+  );
+
+  const prevErrorRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (state?.error && state.error !== prevErrorRef.current) {
+      prevErrorRef.current = state.error;
+      toast.error(state.error);
+    }
+  }, [state?.error]);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="glass-effect border-white/20">
@@ -31,7 +49,7 @@ export function SignUpForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={signUpAction}>
+          <form action={action as (formData: FormData) => void}>
             <FieldGroup className="[&_input::placeholder]:text-white/60">
               {/* OAuth temporalmente oculto - implementar después
               <Field>
@@ -66,9 +84,16 @@ export function SignUpForm({
                   id="name"
                   name="name"
                   type="text"
+                  defaultValue={state?.name}
+                  aria-invalid={!!state?.fieldErrors?.name}
                   placeholder="Juan Pérez"
                   required
                 />
+                {state?.fieldErrors?.name && (
+                  <FieldError className="text-white/90">
+                    {state.fieldErrors.name}
+                  </FieldError>
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="username" className="text-white">
@@ -78,9 +103,16 @@ export function SignUpForm({
                   id="username"
                   name="username"
                   type="text"
+                  defaultValue={state?.username}
+                  aria-invalid={!!state?.fieldErrors?.username}
                   placeholder="juanperez"
                   required
                 />
+                {state?.fieldErrors?.username && (
+                  <FieldError className="text-white/90">
+                    {state.fieldErrors.username}
+                  </FieldError>
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="email" className="text-white">
@@ -90,19 +122,41 @@ export function SignUpForm({
                   id="email"
                   name="email"
                   type="email"
+                  defaultValue={state?.email}
+                  aria-invalid={!!state?.fieldErrors?.email}
                   placeholder="m@example.com"
                   required
                 />
+                {state?.fieldErrors?.email ? (
+                  <FieldError className="text-white/90">
+                    {state.fieldErrors.email}
+                  </FieldError>
+                ) : state?.error && !state.fieldErrors ? (
+                  <FieldError className="text-white/90">
+                    {state.error}
+                  </FieldError>
+                ) : null}
               </Field>
               <Field>
                 <FieldLabel htmlFor="password" className="text-white">
                   Contraseña
                 </FieldLabel>
-                <Input id="password" name="password" type="password" required />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  aria-invalid={!!state?.fieldErrors?.password}
+                  required
+                />
+                {state?.fieldErrors?.password && (
+                  <FieldError className="text-white/90">
+                    {state.fieldErrors.password}
+                  </FieldError>
+                )}
               </Field>
               <Field>
-                <Button type="submit" className="w-full">
-                  Crear Cuenta
+                <Button type="submit" className="w-full" disabled={pending}>
+                  {pending ? "Creando cuenta..." : "Crear Cuenta"}
                 </Button>
                 <FieldDescription className="text-center text-white/90">
                   ¿Ya tienes cuenta?{" "}

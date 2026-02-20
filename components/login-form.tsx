@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,16 +12,33 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { signInAction } from "@/server/users";
+import { signInAction, type SignInResponse } from "@/server/users";
+import { useActionState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [state, action, pending] = useActionState<SignInResponse, FormData>(
+    signInAction,
+    { error: undefined },
+  );
+
+  const prevErrorRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (state?.error && state.error !== prevErrorRef.current) {
+      prevErrorRef.current = state.error;
+      toast.error(state.error);
+    }
+  }, [state?.error]);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="glass-effect border-white/20">
@@ -33,7 +51,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={signInAction}>
+          <form action={action}>
             <FieldGroup className="[&_input::placeholder]:text-white/60">
               {/* OAuth temporalmente oculto - implementar después
               <Field>
@@ -68,9 +86,16 @@ export function LoginForm({
                   id="email"
                   type="email"
                   name="email"
+                  defaultValue={state?.email}
+                  aria-invalid={!!state?.error}
                   placeholder="m@example.com"
                   required
                 />
+                {state?.error && (
+                  <FieldError className="text-white/90">
+                    {state.error}
+                  </FieldError>
+                )}
               </Field>
               <Field>
                 <div className="flex items-center">
@@ -79,7 +104,7 @@ export function LoginForm({
                   </FieldLabel>
                   <Link
                     href="/forgot-password"
-                    className="ml-auto text-sm text-white/80 underline-offset-4 hover:underline hover:!text-white transition-colors"
+                    className="ml-auto text-sm text-white/80 underline-offset-4 hover:underline hover:text-white! transition-colors"
                   >
                     ¿Olvidaste tu contraseña?
                   </Link>
@@ -87,14 +112,14 @@ export function LoginForm({
                 <Input id="password" type="password" name="password" required />
               </Field>
               <Field>
-                <Button type="submit" className="w-full">
-                  Iniciar Sesión
+                <Button type="submit" className="w-full" disabled={pending}>
+                  {pending ? "Iniciando sesión..." : "Iniciar sesión"}
                 </Button>
                 <FieldDescription className="text-center text-white/90">
                   ¿No tienes cuenta?{" "}
                   <Link
                     href="/signup"
-                    className="text-white underline hover:!text-white/70 transition-colors"
+                    className="text-white underline hover:text-white/70! transition-colors"
                   >
                     Regístrate
                   </Link>
@@ -108,14 +133,14 @@ export function LoginForm({
         Al continuar, aceptas nuestros{" "}
         <Link
           href="/terms"
-          className="text-white/90 underline hover:!text-white transition-colors"
+          className="text-white/90 underline hover:text-white! transition-colors"
         >
           Términos de Servicio
         </Link>{" "}
         y{" "}
         <Link
           href="/privacy"
-          className="text-white/90 underline hover:!text-white transition-colors"
+          className="text-white/90 underline hover:text-white! transition-colors"
         >
           Política de Privacidad
         </Link>
