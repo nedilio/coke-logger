@@ -9,6 +9,7 @@ This document summarizes the complete backend implementation for the Coke Logger
 ## 🎯 Overview
 
 A full-stack application for tracking Coca-Cola consumption with:
+
 - User authentication with Better Auth (username plugin)
 - PostgreSQL database (Drizzle ORM)
 - Server actions for all CRUD operations
@@ -21,14 +22,18 @@ A full-stack application for tracking Coca-Cola consumption with:
 ## 📁 Files Created (6 new files)
 
 ### 1. Constants & Enums
+
 **`lib/constants/coke-types.ts`**
+
 - Defines coke types: `original`, `zero`, `light`
 - Defines formats: `glass`, `can`, `plastic`
-- Common sizes: `[250, 330, 375, 500, 600, 1000, 1500, 2000]` ml
+- Common sizes: `[250, 350, 375, 500, 600, 1000, 1500, 2000]` ml
 - TypeScript types exported
 
 ### 2. Validation Schemas
+
 **`lib/validations/coke-log.ts`**
+
 - Create/update schemas for coke logs
 - Validates: cokeType, format, sizeML, notes (max 250), isPublic
 - Date validation: consumedAt cannot be in future
@@ -37,14 +42,18 @@ A full-stack application for tracking Coca-Cola consumption with:
 **Note:** Custom username validation (`lib/validations/username.ts`) has been **removed** - Better Auth's username plugin handles this automatically.
 
 ### 3. Database Schema
+
 **`db/schemas/coke-schema.ts`**
+
 - `cokeLog` table with all fields
 - Foreign key to `user.id` with CASCADE delete
 - Indexes on: userId, consumedAt, isPublic
 - Auto-managed createdAt/updatedAt timestamps
 
 ### 4. Server Actions
+
 **`server/coke-logs.ts`** - Full CRUD for coke logs:
+
 - `createCokeLogAction(data)` - Create new log
 - `getCokeLogsAction()` - Get user's logs
 - `getCokeLogByIdAction(logId)` - Get single log
@@ -54,22 +63,28 @@ A full-stack application for tracking Coca-Cola consumption with:
 - `deleteCokeLogAction(logId)` - Hard delete
 
 **`server/username.ts`** - Username management (wraps Better Auth):
+
 - `updateUsernameAction(newUsername)` - Change username via Better Auth API
 - `checkUsernameAvailabilityAction(username)` - Check availability via Better Auth API
 
 **`server/users.ts`** - Authentication actions:
+
 - `signUpAction(formData)` - Sign up with username support
 - `signInAction(formData)` - Sign in with email/password
 - `signOutAction()` - Sign out
 
 ### 5. Migration Scripts
+
 **`scripts/backfill-usernames.ts`**
+
 - Auto-generates usernames from names for existing users
 - Run with: `pnpm tsx scripts/backfill-usernames.ts`
 - Note: This script may need updating to work with Better Auth's username plugin
 
 ### 6. Documentation
+
 **`FUTURE_CONSIDERATIONS.md`**
+
 - Analytics & statistics ideas
 - Social features (likes, comments, follows)
 - Gamification ideas
@@ -81,23 +96,31 @@ A full-stack application for tracking Coca-Cola consumption with:
 ## 📝 Files Modified (5 files)
 
 ### 1. `db/schemas/auth-schema.ts`
+
 **Changes:**
+
 - Added `username` field to user table (text, unique, required)
 - Added `displayUsername` field to user table (text, optional)
 - Both fields are managed by Better Auth's username plugin
 
 ### 2. `db/schemas/index.ts`
+
 **Changes:**
+
 - Export `cokeLog` table from coke-schema
 - Export `cokeLogRelations` for Drizzle queries
 
 ### 3. `db/drizzle.ts`
+
 **Changes:**
+
 - Include coke schema in Drizzle query client
 - Enables `db.query.cokeLog.findMany()` etc.
 
 ### 4. `lib/auth.ts` ⭐ **UPDATED - Better Auth Username Plugin**
+
 **Changes:**
+
 - ✅ **Now using Better Auth's official `username` plugin**
 - Provides full username support with TypeScript types
 - Configuration:
@@ -108,10 +131,12 @@ A full-stack application for tracking Coca-Cola consumption with:
 - Properly typed session with username field
 
 **Old approach (removed):**
+
 - ❌ Custom `customSession` plugin
 - ❌ Type assertions with `(user as any).username`
 
 **New approach:**
+
 ```typescript
 import { username } from "better-auth/plugins";
 
@@ -127,7 +152,9 @@ export const auth = betterAuth({
 ```
 
 ### 5. `server/users.ts`
+
 **Changes:**
+
 - Updated `signUpAction` to pass `username` to Better Auth
 - Removed custom username validation (handled by plugin)
 - Removed manual database update (handled by plugin)
@@ -137,17 +164,22 @@ export const auth = betterAuth({
 ## 🗄️ Database Migrations
 
 ### Migration 1: `0001_vengeful_titanium_man.sql`
+
 **Applied:**
+
 1. Created `coke_log` table with all fields and indexes
 2. Added `username` column to `user` table (NOT NULL, UNIQUE)
 3. Backfilled existing user with username
 
 ### Migration 2: `0002_misty_blizzard.sql` ⭐ **NEW**
+
 **Applied:**
+
 1. Added `displayUsername` column to `user` table (nullable)
 2. Supports Better Auth's username plugin display username feature
 
 **Run commands:**
+
 ```bash
 pnpm drizzle-kit generate
 pnpm drizzle-kit migrate
@@ -180,15 +212,15 @@ pnpm drizzle-kit migrate
 
 ## 🔑 Key Technical Decisions
 
-| Decision | Rationale |
-|----------|-----------|
+| Decision                           | Rationale                                                                          |
+| ---------------------------------- | ---------------------------------------------------------------------------------- |
 | **Better Auth username plugin** ⭐ | Official plugin provides type-safe username support, validation, and normalization |
-| **Username + displayUsername** | Normalized username for queries, display username for UI (e.g., "TestUser123") |
-| **Privacy default: private** | Logs are private by default, user opts-in to public |
-| **Hard delete** | No soft deletes, logs are permanently removed |
-| **Future dates blocked** | consumedAt cannot be in the future |
-| **nanoid for IDs** | URL-safe, collision-resistant, shorter than UUIDs |
-| **Server-only actions** | All mutations through server actions, not API routes |
+| **Username + displayUsername**     | Normalized username for queries, display username for UI (e.g., "TestUser123")     |
+| **Privacy default: private**       | Logs are private by default, user opts-in to public                                |
+| **Hard delete**                    | No soft deletes, logs are permanently removed                                      |
+| **Future dates blocked**           | consumedAt cannot be in the future                                                 |
+| **nanoid for IDs**                 | URL-safe, collision-resistant, shorter than UUIDs                                  |
+| **Server-only actions**            | All mutations through server actions, not API routes                               |
 
 ---
 
@@ -206,11 +238,11 @@ import { headers } from "next/headers";
 
 export async function myServerAction() {
   const session = await auth.api.getSession({ headers: await headers() });
-  
+
   if (!session?.user) {
     throw new Error("Unauthorized");
   }
-  
+
   // Username is fully typed! No type assertions needed
   console.log(`Username: ${session.user.username}`);
   console.log(`Display: ${session.user.displayUsername}`);
@@ -227,7 +259,7 @@ await auth.api.signUpEmail({
     password: "password123",
     username: "johndoe", // Normalized to lowercase
     displayUsername: "JohnDoe", // Optional, preserves original casing
-  }
+  },
 });
 ```
 
@@ -270,6 +302,7 @@ await auth.api.signInUsername({
 ## 📊 Database Schema Reference
 
 ### User Table (updated)
+
 ```sql
 CREATE TABLE "user" (
   "id" text PRIMARY KEY,
@@ -285,6 +318,7 @@ CREATE TABLE "user" (
 ```
 
 ### Coke Log Table
+
 ```sql
 CREATE TABLE "coke_log" (
   "id" text PRIMARY KEY,
@@ -312,12 +346,14 @@ CREATE INDEX "coke_log_is_public_idx" ON "coke_log" ("is_public");
 The backend is complete. Next, you'll need to build:
 
 ### 1. **Signup Form Update**
+
 - Add username field to registration
 - Optional: add displayUsername field for custom display
 - Client-side validation via Better Auth client plugin
 - Real-time availability check
 
 ### 2. **Better Auth Client Setup** ⭐ **IMPORTANT**
+
 Add the username client plugin:
 
 ```typescript
@@ -333,6 +369,7 @@ export const authClient = createAuthClient({
 ```
 
 ### 3. **Coke Log Entry Form**
+
 - Dropdowns for coke type and format
 - Size selector (common sizes + custom)
 - Notes textarea (250 char limit)
@@ -340,18 +377,21 @@ export const authClient = createAuthClient({
 - Privacy toggle (public/private)
 
 ### 4. **User Dashboard**
+
 - Display user's logs (all logs, not just public)
 - Edit/delete actions
 - Privacy toggle per log
 - Filters/sorting
 
 ### 5. **Public Feed Page**
+
 - Display public logs from all users
 - Show displayUsername (or username as fallback)
 - Show avatar
 - Pagination or infinite scroll
 
 ### 6. **Settings Page**
+
 - Change username
 - Change displayUsername
 - Real-time availability check via `authClient.isUsernameAvailable()`
@@ -361,13 +401,14 @@ export const authClient = createAuthClient({
 ## 🧪 Testing Examples
 
 ### Test Public Feed
+
 ```typescript
 import { getPublicCokeLogsAction } from "@/server/coke-logs";
 
 const publicLogs = await getPublicCokeLogsAction(10);
 
 // Each log includes user data with username and displayUsername
-publicLogs.forEach(log => {
+publicLogs.forEach((log) => {
   console.log({
     cokeType: log.cokeType,
     username: log.user.username,
@@ -377,6 +418,7 @@ publicLogs.forEach(log => {
 ```
 
 ### Test Username Availability
+
 ```typescript
 import { checkUsernameAvailabilityAction } from "@/server/username";
 
@@ -389,6 +431,7 @@ console.log(result.available); // true or false
 ## 📚 Better Auth Username Plugin Features
 
 ✅ **Built-in Features:**
+
 - Username normalization (lowercase by default)
 - Display username support (preserves original casing)
 - Username validation (alphanumeric + underscore + dots)
@@ -400,6 +443,7 @@ console.log(result.available); // true or false
 - No custom session plugins needed
 
 ✅ **Advantages over Custom Implementation:**
+
 - Proper TypeScript inference
 - No type assertions needed
 - Follows Better Auth best practices
@@ -411,15 +455,15 @@ console.log(result.available); // true or false
 
 ## 🎯 Implementation Status
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Database Schema | ✅ Complete | Migrated with username + displayUsername |
-| Validations | ✅ Complete | Better Auth plugin handles username validation |
-| Server Actions | ✅ Complete | Full CRUD + username management |
-| Username Plugin | ✅ Complete | Better Auth official plugin configured |
-| Type Safety | ✅ Complete | No TypeScript errors, proper typing |
-| Documentation | ✅ Complete | This file + FUTURE_CONSIDERATIONS.md |
-| Frontend UI | ⏳ Pending | Ready for implementation |
+| Component       | Status      | Notes                                          |
+| --------------- | ----------- | ---------------------------------------------- |
+| Database Schema | ✅ Complete | Migrated with username + displayUsername       |
+| Validations     | ✅ Complete | Better Auth plugin handles username validation |
+| Server Actions  | ✅ Complete | Full CRUD + username management                |
+| Username Plugin | ✅ Complete | Better Auth official plugin configured         |
+| Type Safety     | ✅ Complete | No TypeScript errors, proper typing            |
+| Documentation   | ✅ Complete | This file + FUTURE_CONSIDERATIONS.md           |
+| Frontend UI     | ⏳ Pending  | Ready for implementation                       |
 
 ---
 
@@ -438,19 +482,25 @@ console.log(result.available); // true or false
 ## 📞 Common Issues & Solutions
 
 ### Issue: "Cannot find name 'username'"
+
 **Solution:** Make sure you imported the plugin:
+
 ```typescript
 import { username } from "better-auth/plugins";
 ```
 
 ### Issue: TypeScript doesn't recognize session.user.username
+
 **Solution:** Better Auth with the username plugin automatically types this. Make sure:
+
 1. You're using the latest Better Auth version
 2. The plugin is in the auth config
 3. TypeScript server is restarted
 
 ### Issue: Username not showing in session
+
 **Solution:** Check that:
+
 1. The username plugin is added to `lib/auth.ts`
 2. Database has username and displayUsername columns
 3. User record actually has a username value

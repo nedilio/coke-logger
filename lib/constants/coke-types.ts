@@ -7,5 +7,5 @@ export const FORMATS = ["glass", "can", "plastic"] as const;
 export type Format = (typeof FORMATS)[number];
 
 // Common size presets (in ml)
-export const COMMON_SIZES = [250, 330, 375, 500, 600, 1000, 1500, 2000] as const;
+export const COMMON_SIZES = [220, 350, 500, 600, 1000, 1500, 2000] as const;
 export type CommonSize = (typeof COMMON_SIZES)[number];

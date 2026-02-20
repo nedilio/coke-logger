@@ -188,8 +188,8 @@ export function CokeLogForm() {
               <PillSelector
                 name="size"
                 options={[
-                  { value: "250", label: "250ml" },
-                  { value: "330", label: "330ml" },
+                  { value: "220", label: "220ml" },
+                  { value: "350", label: "350ml" },
                   { value: "500", label: "500ml" },
                   { value: "600", label: "600ml" },
                   { value: "1000", label: "1L" },
