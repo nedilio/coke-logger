@@ -1,9 +1,17 @@
 "use server";
 
 import { getDateRangeLabel, getRanking } from "@/server/services/ranking-service";
-import type { RankingEntry, RankingPeriod, RankingFilter } from "@/server/services/ranking-service";
 
-export type { RankingEntry, RankingPeriod, RankingFilter };
+export type RankingPeriod = "week" | "month";
+export type RankingFilter = "following" | "all";
+
+export interface RankingEntry {
+  position: number;
+  username: string;
+  totalML: number;
+  totalL: string;
+  favoriteType: string;
+}
 
 export { getDateRangeLabel };
 
