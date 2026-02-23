@@ -16,25 +16,32 @@ export function calculateDashboardStats(logs: CokeLog[]): DashboardStats {
 
   const totalLogs = logs.length;
 
-  const logsThisWeek = logs.filter((log) =>
-    isDateInRange(new Date(log.consumedAt), weekRange)
-  ).length;
+  let logsThisWeek = 0;
+  let mlThisWeek = 0;
+  let mlThisMonth = 0;
+  const cokeTypes: string[] = [];
+  const sizes: number[] = [];
 
-  const mlThisWeek = logs
-    .filter((log) => isDateInRange(new Date(log.consumedAt), weekRange))
-    .reduce((sum, log) => sum + log.sizeML, 0);
+  for (const log of logs) {
+    const consumedAt = new Date(log.consumedAt);
+    const inWeek = isDateInRange(consumedAt, weekRange);
+    const inMonth = isDateInRange(consumedAt, monthRange);
 
-  const mlThisMonth = logs
-    .filter((log) => isDateInRange(new Date(log.consumedAt), monthRange))
-    .reduce((sum, log) => sum + log.sizeML, 0);
+    if (inWeek) {
+      logsThisWeek++;
+      mlThisWeek += log.sizeML;
+    }
 
-  const favoriteType = calculateMode(
-    logs.map((log) => log.cokeType)
-  ) || "None";
+    if (inMonth) {
+      mlThisMonth += log.sizeML;
+    }
 
-  const favoriteSizeML = calculateMode(
-    logs.map((log) => log.sizeML)
-  ) || 0;
+    cokeTypes.push(log.cokeType);
+    sizes.push(log.sizeML);
+  }
+
+  const favoriteType = calculateMode(cokeTypes) || "None";
+  const favoriteSizeML = (calculateMode(sizes) as number | undefined) || 0;
 
   return {
     totalLogs,

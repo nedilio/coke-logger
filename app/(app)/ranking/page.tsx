@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -12,12 +12,25 @@ import {
 import { PillSelector } from "@/components/pill-selector";
 import { getRankingAction, getDateRangeLabel, type RankingEntry, type RankingPeriod, type RankingFilter } from "@/server/ranking";
 
+const FILTER_OPTIONS = [
+  { value: "following", label: "Siguiendo" },
+  { value: "all", label: "Todos" },
+] as const;
+
+const PERIOD_OPTIONS = [
+  { value: "week", label: "Semana" },
+  { value: "month", label: "Mes" },
+] as const;
+
 export default function RankingPage() {
   const [period, setPeriod] = useState<RankingPeriod>("week");
   const [filter, setFilter] = useState<RankingFilter>("following");
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
   const [dateLabel, setDateLabel] = useState<string>("");
   const [isPending, startTransition] = useTransition();
+
+  const filterOptions = useMemo(() => FILTER_OPTIONS, []);
+  const periodOptions = useMemo(() => PERIOD_OPTIONS, []);
 
   useEffect(() => {
     startTransition(async () => {
@@ -42,10 +55,7 @@ export default function RankingPage() {
       <div className="flex gap-4">
         <PillSelector
           name="filter"
-          options={[
-            { value: "following", label: "Siguiendo" },
-            { value: "all", label: "Todos" },
-          ]}
+          options={filterOptions}
           value={filter}
           onChange={(value) => setFilter(value as RankingFilter)}
         />
@@ -53,10 +63,7 @@ export default function RankingPage() {
 
       <PillSelector
         name="period"
-        options={[
-          { value: "week", label: "Semana" },
-          { value: "month", label: "Mes" },
-        ]}
+        options={periodOptions}
         value={period}
         onChange={(value) => setPeriod(value as RankingPeriod)}
       />

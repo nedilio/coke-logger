@@ -8,7 +8,7 @@ interface PillSelectorOption {
 }
 
 interface PillSelectorProps {
-  options: PillSelectorOption[];
+  options: readonly PillSelectorOption[] | PillSelectorOption[];
   value: string | null;
   onChange: (value: string) => void;
   name: string;

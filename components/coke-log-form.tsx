@@ -19,6 +19,37 @@ import { PillSelector } from "@/components/pill-selector";
 import { createCokeLogAction } from "@/server/coke-logs";
 import type { CokeType, Format } from "@/lib/constants/coke-types";
 
+const COKE_TYPE_OPTIONS = [
+  { value: "original", label: "Original" },
+  { value: "zero", label: "Zero" },
+  { value: "light", label: "Light" },
+] as const;
+
+const FORMAT_OPTIONS = [
+  { value: "glass", label: "Vidrio" },
+  { value: "can", label: "Lata" },
+  { value: "plastic", label: "Plástico" },
+] as const;
+
+const SIZE_OPTIONS = [
+  { value: "220", label: "220ml" },
+  { value: "350", label: "350ml" },
+  { value: "500", label: "500ml" },
+  { value: "600", label: "600ml" },
+  { value: "1000", label: "1L" },
+  { value: "1500", label: "1.5L" },
+  { value: "2000", label: "2L" },
+  { value: "custom", label: "Personalizado" },
+] as const;
+
+const CONSUMED_AT_OPTIONS = [
+  { value: "now", label: "Ahora" },
+  { value: "1h", label: "Hace 1 hora" },
+  { value: "2h", label: "Hace 2 horas" },
+  { value: "3h", label: "Hace 3 horas" },
+  { value: "custom", label: "Personalizado" },
+] as const;
+
 interface FormData {
   cokeType: CokeType | null;
   format: Format | null;
@@ -149,11 +180,7 @@ export function CokeLogForm() {
               <FieldLabel>Tipo de Coca-Cola *</FieldLabel>
               <PillSelector
                 name="cokeType"
-                options={[
-                  { value: "original", label: "Original" },
-                  { value: "zero", label: "Zero" },
-                  { value: "light", label: "Light" },
-                ]}
+                options={COKE_TYPE_OPTIONS}
                 value={formData.cokeType}
                 onChange={(value) =>
                   setFormData({ ...formData, cokeType: value as CokeType })
@@ -168,11 +195,7 @@ export function CokeLogForm() {
               <FieldLabel>Formato *</FieldLabel>
               <PillSelector
                 name="format"
-                options={[
-                  { value: "glass", label: "Vidrio" },
-                  { value: "can", label: "Lata" },
-                  { value: "plastic", label: "Plástico" },
-                ]}
+                options={FORMAT_OPTIONS}
                 value={formData.format}
                 onChange={(value) =>
                   setFormData({ ...formData, format: value as Format })
@@ -187,16 +210,7 @@ export function CokeLogForm() {
               <FieldLabel>Tamaño *</FieldLabel>
               <PillSelector
                 name="size"
-                options={[
-                  { value: "220", label: "220ml" },
-                  { value: "350", label: "350ml" },
-                  { value: "500", label: "500ml" },
-                  { value: "600", label: "600ml" },
-                  { value: "1000", label: "1L" },
-                  { value: "1500", label: "1.5L" },
-                  { value: "2000", label: "2L" },
-                  { value: "custom", label: "Personalizado" },
-                ]}
+                options={SIZE_OPTIONS}
                 value={
                   formData.showCustomSize
                     ? "custom"
@@ -221,7 +235,7 @@ export function CokeLogForm() {
                 error={errors.sizeML}
               />
 
-              {formData.showCustomSize && (
+              {formData.showCustomSize ? (
                 <div className="flex items-center gap-2 mt-2">
                   <Input
                     type="number"
@@ -240,7 +254,7 @@ export function CokeLogForm() {
                   />
                   <span className="text-sm text-muted-foreground">ml</span>
                 </div>
-              )}
+              ) : null}
             </Field>
 
             {/* Consumido en */}
@@ -248,13 +262,7 @@ export function CokeLogForm() {
               <FieldLabel>¿Cuándo tomaste cokita? *</FieldLabel>
               <PillSelector
                 name="consumedAt"
-                options={[
-                  { value: "now", label: "Ahora" },
-                  { value: "1h", label: "Hace 1 hora" },
-                  { value: "2h", label: "Hace 2 horas" },
-                  { value: "3h", label: "Hace 3 horas" },
-                  { value: "custom", label: "Personalizado" },
-                ]}
+                options={CONSUMED_AT_OPTIONS}
                 value={formData.consumedAtQuickSelect}
                 onChange={(value) => {
                   if (value === "custom") {
@@ -278,7 +286,7 @@ export function CokeLogForm() {
                 error={errors.consumedAt}
               />
 
-              {formData.showCustomDateTime && (
+              {formData.showCustomDateTime ? (
                 <Input
                   type="datetime-local"
                   max={new Date().toISOString().slice(0, 16)}
@@ -293,7 +301,7 @@ export function CokeLogForm() {
                   }}
                   className="mt-2"
                 />
-              )}
+              ) : null}
             </Field>
 
             {/* Notas */}
