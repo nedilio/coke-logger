@@ -1,8 +1,10 @@
 "use server";
 
 import { db } from "@/db/drizzle";
-import { cokeLog, user } from "@/db/schemas";
-import { eq, and, gte, lte, sql, desc } from "drizzle-orm";
+import { cokeLog, user, userFollows } from "@/db/schemas";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { eq, and, gte, lte, sql, desc, inArray } from "drizzle-orm";
 
 export interface RankingEntry {
   position: number;
@@ -13,6 +15,7 @@ export interface RankingEntry {
 }
 
 export type RankingPeriod = "week" | "month";
+export type RankingFilter = "following" | "all";
 
 export async function getDateRangeLabel(period: RankingPeriod): Promise<string> {
   const { start, end } = getDateRangeForPeriod(period);
@@ -72,8 +75,49 @@ function mapCokeType(type: string): string {
   return typeMap[type.toLowerCase()] || type;
 }
 
-export async function getRankingAction(period: RankingPeriod): Promise<RankingEntry[]> {
+async function getCurrentUserId(): Promise<string | null> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  return session?.user?.id || null;
+}
+
+export async function getRankingAction(
+  period: RankingPeriod, 
+  filter: RankingFilter = "following"
+): Promise<RankingEntry[]> {
   const { start, end } = getDateRangeForPeriod(period);
+  const currentUserId = await getCurrentUserId();
+
+  let userIdsFilter: string[] | undefined;
+
+  if (filter === "following" && currentUserId) {
+    const following = await db
+      .select({ followingId: userFollows.followingId })
+      .from(userFollows)
+      .where(eq(userFollows.followerId, currentUserId));
+    
+    const followingIds = following.map((f) => f.followingId);
+    userIdsFilter = [...followingIds, currentUserId]; // Include current user
+    
+    if (userIdsFilter.length === 0) {
+      return [];
+    }
+  }
+
+  const baseCondition = and(
+    eq(cokeLog.isPublic, true),
+    gte(cokeLog.consumedAt, start),
+    lte(cokeLog.consumedAt, end)
+  );
+
+  let whereCondition;
+  if (userIdsFilter) {
+    whereCondition = and(
+      baseCondition,
+      inArray(cokeLog.userId, userIdsFilter)
+    );
+  } else {
+    whereCondition = baseCondition;
+  }
 
   const results = await db
     .select({
@@ -83,13 +127,7 @@ export async function getRankingAction(period: RankingPeriod): Promise<RankingEn
     })
     .from(cokeLog)
     .innerJoin(user, eq(cokeLog.userId, user.id))
-    .where(
-      and(
-        eq(cokeLog.isPublic, true),
-        gte(cokeLog.consumedAt, start),
-        lte(cokeLog.consumedAt, end)
-      )
-    )
+    .where(whereCondition)
     .groupBy(user.id, user.username)
     .orderBy(desc(sql`COALESCE(SUM(${cokeLog.sizeML}), 0)`));
 

@@ -10,10 +10,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PillSelector } from "@/components/pill-selector";
-import { getRankingAction, getDateRangeLabel, type RankingEntry, type RankingPeriod } from "@/server/ranking";
+import { getRankingAction, getDateRangeLabel, type RankingEntry, type RankingPeriod, type RankingFilter } from "@/server/ranking";
 
 export default function RankingPage() {
   const [period, setPeriod] = useState<RankingPeriod>("week");
+  const [filter, setFilter] = useState<RankingFilter>("following");
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
   const [dateLabel, setDateLabel] = useState<string>("");
   const [isPending, startTransition] = useTransition();
@@ -21,13 +22,13 @@ export default function RankingPage() {
   useEffect(() => {
     startTransition(async () => {
       const [data, label] = await Promise.all([
-        getRankingAction(period),
+        getRankingAction(period, filter),
         getDateRangeLabel(period),
       ]);
       setRanking(data);
       setDateLabel(label);
     });
-  }, [period]);
+  }, [period, filter]);
 
   return (
     <div className="container mx-auto p-6 max-w-3xl space-y-6">
@@ -36,6 +37,18 @@ export default function RankingPage() {
         <p className="text-muted-foreground">
           Descubre quién consume más Coca-Cola
         </p>
+      </div>
+
+      <div className="flex gap-4">
+        <PillSelector
+          name="filter"
+          options={[
+            { value: "following", label: "Siguiendo" },
+            { value: "all", label: "Todos" },
+          ]}
+          value={filter}
+          onChange={(value) => setFilter(value as RankingFilter)}
+        />
       </div>
 
       <PillSelector
@@ -70,7 +83,9 @@ export default function RankingPage() {
             ) : ranking.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                  No hay datos para este período
+                  {filter === "following" 
+                    ? "No hay datos de usuarios que sigues. ¡Sigue a más personas!" 
+                    : "No hay datos para este período"}
                 </TableCell>
               </TableRow>
             ) : (
