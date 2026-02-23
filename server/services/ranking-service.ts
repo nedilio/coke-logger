@@ -18,15 +18,23 @@ export interface RankingEntry {
 export type RankingPeriod = "week" | "month";
 export type RankingFilter = "following" | "all";
 
-export async function getDateRangeLabel(period: RankingPeriod): Promise<string> {
+export async function getDateRangeLabel(
+  period: RankingPeriod,
+): Promise<string> {
   const { start, end } = getDateRangeForPeriod(period);
   const monthFormatter = new Intl.DateTimeFormat("es-ES", { month: "long" });
 
   if (period === "week") {
     const startDay = start.getDate();
     const endDay = end.getDate();
-    const month = monthFormatter.format(start);
-    return `${startDay} - ${endDay} de ${month}`;
+    const startMonth = monthFormatter.format(start);
+    const endMonth = monthFormatter.format(end);
+    const year = end.getFullYear();
+
+    if (start.getMonth() === end.getMonth()) {
+      return `${startDay} - ${endDay} de ${startMonth} ${year}`;
+    }
+    return `${startDay} de ${startMonth} - ${endDay} de ${endMonth} ${year}`;
   } else {
     const month = monthFormatter.format(start);
     const year = start.getFullYear();
@@ -36,7 +44,7 @@ export async function getDateRangeLabel(period: RankingPeriod): Promise<string> 
 
 export async function getRanking(
   period: RankingPeriod,
-  filter: RankingFilter = "following"
+  filter: RankingFilter = "following",
 ): Promise<RankingEntry[]> {
   const { start, end } = getDateRangeForPeriod(period);
   const currentUserId = await getCurrentUserId();
@@ -60,15 +68,12 @@ export async function getRanking(
   const baseCondition = and(
     eq(cokeLog.isPublic, true),
     gte(cokeLog.consumedAt, start),
-    lte(cokeLog.consumedAt, end)
+    lte(cokeLog.consumedAt, end),
   );
 
   let whereCondition;
   if (userIdsFilter) {
-    whereCondition = and(
-      baseCondition,
-      inArray(cokeLog.userId, userIdsFilter)
-    );
+    whereCondition = and(baseCondition, inArray(cokeLog.userId, userIdsFilter));
   } else {
     whereCondition = baseCondition;
   }
