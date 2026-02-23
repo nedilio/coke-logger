@@ -1,0 +1,91 @@
+"use client";
+
+import { useState, useEffect, useTransition } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { PillSelector } from "@/components/pill-selector";
+import { getRankingAction, getDateRangeLabel, type RankingEntry, type RankingPeriod } from "@/server/ranking";
+
+export default function RankingPage() {
+  const [period, setPeriod] = useState<RankingPeriod>("week");
+  const [ranking, setRanking] = useState<RankingEntry[]>([]);
+  const [dateLabel, setDateLabel] = useState<string>("");
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    startTransition(async () => {
+      const [data, label] = await Promise.all([
+        getRankingAction(period),
+        getDateRangeLabel(period),
+      ]);
+      setRanking(data);
+      setDateLabel(label);
+    });
+  }, [period]);
+
+  return (
+    <div className="container mx-auto p-6 max-w-3xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Ranking</h1>
+        <p className="text-muted-foreground">
+          Descubre quién consume más Coca-Cola
+        </p>
+      </div>
+
+      <PillSelector
+        name="period"
+        options={[
+          { value: "week", label: "Semana" },
+          { value: "month", label: "Mes" },
+        ]}
+        value={period}
+        onChange={(value) => setPeriod(value as RankingPeriod)}
+      />
+
+      <p className="text-sm text-muted-foreground">{dateLabel}</p>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-16">#</TableHead>
+              <TableHead>Usuario</TableHead>
+              <TableHead className="text-right">ML (L)</TableHead>
+              <TableHead className="text-right">Tipo</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isPending ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  Cargando...
+                </TableCell>
+              </TableRow>
+            ) : ranking.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  No hay datos para este período
+                </TableCell>
+              </TableRow>
+            ) : (
+              ranking.map((entry) => (
+                <TableRow key={entry.position}>
+                  <TableCell className="font-medium">{entry.position}</TableCell>
+                  <TableCell>{entry.username}</TableCell>
+                  <TableCell className="text-right">{entry.totalL}</TableCell>
+                  <TableCell className="text-right">{entry.favoriteType}</TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}

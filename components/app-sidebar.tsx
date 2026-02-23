@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusCircle, User, LogOut } from "lucide-react";
+import { Home, PlusCircle, User, LogOut, TrophyIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -38,6 +38,7 @@ export function AppSidebar({ username }: AppSidebarProps) {
   const navItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
     { href: "/create", label: "Agregar Entrada", icon: PlusCircle },
+    { href: "/ranking", label: "Ranking", icon: TrophyIcon },
     { href: "/profile", label: "Perfil", icon: User },
   ];
 
