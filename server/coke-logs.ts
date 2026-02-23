@@ -1,257 +1,58 @@
 "use server";
 
-import { nanoid } from "nanoid";
-import { db } from "@/db/drizzle";
-import { cokeLog } from "@/db/schemas";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { requireUserId } from "@/server/services/auth-service";
+import {
+  createCokeLog,
+  getCokeLogsByUser,
+  getCokeLogById,
+  getPublicCokeLogs,
+  updateCokeLog,
+  toggleCokeLogPrivacy,
+  deleteCokeLog,
+} from "@/server/services/coke-log-service";
+import { getDashboardStats } from "@/server/services/stats-service";
 import {
   createCokeLogSchema,
   updateCokeLogSchema,
 } from "@/lib/validations/coke-log";
-import { eq, and, desc } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
-// CREATE - Add new coke log entry
 export async function createCokeLogAction(data: unknown) {
-  // 1. Authenticate user
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-
-  // 2. Validate input
+  const userId = await requireUserId();
   const validatedData = createCokeLogSchema.parse(data);
-
-  // 3. Insert into database
-  const [newLog] = await db
-    .insert(cokeLog)
-    .values({
-      id: nanoid(),
-      userId: session.user.id,
-      ...validatedData,
-    })
-    .returning();
-
-  // 4. Revalidate cache
-  revalidatePath("/dashboard");
-  revalidatePath("/create");
-
-  return newLog;
+  return createCokeLog(userId, validatedData);
 }
 
-// READ - Get all logs for current user
 export async function getCokeLogsAction() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-
-  const logs = await db.query.cokeLog.findMany({
-    where: eq(cokeLog.userId, session.user.id),
-    orderBy: [desc(cokeLog.consumedAt)],
-  });
-
-  return logs;
+  const userId = await requireUserId();
+  return getCokeLogsByUser(userId);
 }
 
-// READ - Dashboard statistics
 export async function getDashboardStatsAction() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-
-  const logs = await db.query.cokeLog.findMany({
-    where: eq(cokeLog.userId, session.user.id),
-  });
-
-  // Total logs
-  const totalLogs = logs.length;
-
-  // Logs this week (Monday to Sunday)
-  const now = new Date();
-
-  // Calculate start of week (Monday)
-  const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, ...
-  const diffToMonday = currentDay === 0 ? 6 : currentDay - 1; // Days to subtract to get to Monday
-  const weekStart = new Date(now);
-  weekStart.setDate(now.getDate() - diffToMonday);
-  weekStart.setHours(0, 0, 0, 0);
-
-  // Calculate end of week (Sunday)
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-  weekEnd.setHours(23, 59, 59, 999);
-
-  const logsThisWeek = logs.filter((log) => {
-    const logDate = new Date(log.consumedAt);
-    return logDate >= weekStart && logDate <= weekEnd;
-  }).length;
-
-  // Calculate liters this week
-  const mlThisWeek = logs
-    .filter((log) => {
-      const logDate = new Date(log.consumedAt);
-      return logDate >= weekStart && logDate <= weekEnd;
-    })
-    .reduce((sum, log) => sum + log.sizeML, 0);
-
-  // Calculate liters this month
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  monthEnd.setHours(23, 59, 59, 999);
-
-  const mlThisMonth = logs
-    .filter((log) => {
-      const logDate = new Date(log.consumedAt);
-      return logDate >= monthStart && logDate <= monthEnd;
-    })
-    .reduce((sum, log) => sum + log.sizeML, 0);
-
-  // Favorite coke type (mode)
-  const typeCount = logs.reduce(
-    (acc, log) => {
-      acc[log.cokeType] = (acc[log.cokeType] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-  const favoriteType =
-    Object.entries(typeCount).sort((a, b) => b[1] - a[1])[0]?.[0] || "None";
-
-  // Favorite size (mode)
-  const sizeCount = logs.reduce(
-    (acc, log) => {
-      acc[log.sizeML] = (acc[log.sizeML] || 0) + 1;
-      return acc;
-    },
-    {} as Record<number, number>,
-  );
-  const favoriteSizeML =
-    Number(Object.entries(sizeCount).sort((a, b) => b[1] - a[1])[0]?.[0]) || 0;
-
-  // const grouped = Object.groupBy(logs, (log) => log.cokeType);
-
-  return {
-    totalLogs,
-    logsThisWeek,
-    mlThisWeek,
-    mlThisMonth,
-    favoriteType,
-    favoriteSizeML,
-  };
+  const userId = await requireUserId();
+  return getDashboardStats(userId);
 }
 
-// READ - Get single log by ID
 export async function getCokeLogByIdAction(logId: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-
-  const log = await db.query.cokeLog.findFirst({
-    where: and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)),
-  });
-
-  if (!log) {
-    throw new Error("Log not found");
-  }
-
-  return log;
+  const userId = await requireUserId();
+  return getCokeLogById(userId, logId);
 }
 
-// READ - Get public logs from all users (public feed)
 export async function getPublicCokeLogsAction(limit: number = 50) {
-  const logs = await db.query.cokeLog.findMany({
-    where: eq(cokeLog.isPublic, true),
-    orderBy: [desc(cokeLog.consumedAt)],
-    limit,
-    with: {
-      user: {
-        columns: {
-          id: true,
-          username: true,
-          displayUsername: true,
-          image: true,
-        },
-      },
-    },
-  });
-
-  return logs;
+  return getPublicCokeLogs(limit);
 }
 
-// UPDATE - Edit existing log
 export async function updateCokeLogAction(logId: string, data: unknown) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-
+  const userId = await requireUserId();
   const validatedData = updateCokeLogSchema.parse(data);
-
-  const [updatedLog] = await db
-    .update(cokeLog)
-    .set(validatedData)
-    .where(and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)))
-    .returning();
-
-  if (!updatedLog) {
-    throw new Error("Log not found");
-  }
-
-  revalidatePath("/dashboard");
-
-  return updatedLog;
+  return updateCokeLog(userId, logId, validatedData);
 }
 
-// UPDATE - Toggle privacy of a log
 export async function toggleCokeLogPrivacyAction(logId: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-
-  // First, get the current log
-  const currentLog = await db.query.cokeLog.findFirst({
-    where: and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)),
-  });
-
-  if (!currentLog) {
-    throw new Error("Log not found");
-  }
-
-  // Toggle the privacy
-  const [updatedLog] = await db
-    .update(cokeLog)
-    .set({ isPublic: !currentLog.isPublic })
-    .where(and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)))
-    .returning();
-
-  revalidatePath("/dashboard");
-  revalidatePath("/feed");
-
-  return updatedLog;
+  const userId = await requireUserId();
+  return toggleCokeLogPrivacy(userId, logId);
 }
 
-// DELETE - Remove log
 export async function deleteCokeLogAction(logId: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
-
-  const [deletedLog] = await db
-    .delete(cokeLog)
-    .where(and(eq(cokeLog.id, logId), eq(cokeLog.userId, session.user.id)))
-    .returning();
-
-  if (!deletedLog) {
-    throw new Error("Log not found");
-  }
-
-  revalidatePath("/dashboard");
-
-  return { success: true };
+  const userId = await requireUserId();
+  return deleteCokeLog(userId, logId);
 }
