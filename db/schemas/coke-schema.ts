@@ -13,6 +13,7 @@ export const cokeLog = pgTable(
     format: text("format").notNull(), // "glass", "can", "plastic"
     sizeML: integer("size_ml").notNull(),
     notes: text("notes"),
+    imageUrl: text("image_url"),
     isPublic: boolean("is_public").default(false).notNull(),
     consumedAt: timestamp("consumed_at").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -16,6 +16,7 @@ export const createCokeLogSchema = z.object({
   notes: z.string().max(250, {
     message: "Notes must be 250 characters or less",
   }).optional(),
+  imageUrl: z.string().url().optional(),
   consumedAt: z.date({
     message: "Please select when you consumed the coke",
   }).refine(

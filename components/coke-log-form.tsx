@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -61,6 +62,7 @@ interface FormData {
   showCustomDateTime: boolean;
   customDateTimeInput: string;
   notes: string;
+  imageUrl: string | null;
   isPublic: boolean;
 }
 
@@ -77,6 +79,7 @@ export function CokeLogForm() {
     showCustomDateTime: false,
     customDateTimeInput: "",
     notes: "",
+    imageUrl: null,
     isPublic: true,
   });
 
@@ -129,6 +132,7 @@ export function CokeLogForm() {
         sizeML: formData.sizeML!,
         consumedAt: formData.consumedAt,
         notes: formData.notes || undefined,
+        imageUrl: formData.imageUrl || undefined,
         isPublic: formData.isPublic,
       };
 
@@ -148,6 +152,7 @@ export function CokeLogForm() {
         showCustomDateTime: false,
         customDateTimeInput: "",
         notes: "",
+        imageUrl: null,
         isPublic: false,
       });
       setErrors({});
@@ -323,6 +328,47 @@ export function CokeLogForm() {
               />
               <p className="text-xs text-muted-foreground text-right mt-1">
                 {formData.notes.length}/250 caracteres
+              </p>
+            </Field>
+
+            {/* Foto (opcional) */}
+            <Field>
+              <FieldLabel>Foto (opcional)</FieldLabel>
+              {formData.imageUrl ? (
+                <div className="relative w-32 h-32 rounded-lg overflow-hidden border border-border">
+                  <Image
+                    src={formData.imageUrl}
+                    alt="Foto del coke"
+                    fill
+                    className="object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, imageUrl: null })}
+                    className="absolute top-1 right-1 bg-black/50 text-white rounded-full p-1 hover:bg-black/70"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <label className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary transition-colors">
+                  <span className="text-sm text-muted-foreground">+ Foto</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const objectUrl = URL.createObjectURL(file);
+                        setFormData({ ...formData, imageUrl: objectUrl });
+                      }
+                    }}
+                  />
+                </label>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">
+                Agrega una foto de tu bebida (máx 4MB)
               </p>
             </Field>
 
