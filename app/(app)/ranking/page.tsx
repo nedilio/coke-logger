@@ -10,7 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PillSelector } from "@/components/pill-selector";
-import { getRankingAction, getDateRangeLabel, type RankingEntry, type RankingPeriod, type RankingFilter } from "@/server/ranking";
+import {
+  getRankingAction,
+  getDateRangeLabel,
+  type RankingEntry,
+  type RankingPeriod,
+  type RankingFilter,
+} from "@/server/ranking";
+import { AppHeader } from "@/components/app-header";
 
 const FILTER_OPTIONS = [
   { value: "following", label: "Siguiendo" },
@@ -45,12 +52,16 @@ export default function RankingPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-3xl space-y-6">
-      <div>
+      <AppHeader
+        title="Ranking"
+        description="Descubre quién consume más Coca-Cola"
+      />
+      {/* <div>
         <h1 className="text-2xl font-bold mb-2">Ranking</h1>
         <p className="text-muted-foreground">
           Descubre quién consume más Coca-Cola
         </p>
-      </div>
+      </div> */}
 
       <div className="flex gap-4">
         <PillSelector
@@ -83,25 +94,35 @@ export default function RankingPage() {
           <TableBody>
             {isPending ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                <TableCell
+                  colSpan={4}
+                  className="text-center py-8 text-muted-foreground"
+                >
                   Cargando...
                 </TableCell>
               </TableRow>
             ) : ranking.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                  {filter === "following" 
-                    ? "No hay datos de usuarios que sigues. ¡Sigue a más personas!" 
+                <TableCell
+                  colSpan={4}
+                  className="text-center py-8 text-muted-foreground"
+                >
+                  {filter === "following"
+                    ? "No hay datos de usuarios que sigues. ¡Sigue a más personas!"
                     : "No hay datos para este período"}
                 </TableCell>
               </TableRow>
             ) : (
               ranking.map((entry) => (
                 <TableRow key={entry.position}>
-                  <TableCell className="font-medium">{entry.position}</TableCell>
+                  <TableCell className="font-medium">
+                    {entry.position}
+                  </TableCell>
                   <TableCell>{entry.username}</TableCell>
                   <TableCell className="text-right">{entry.totalL}</TableCell>
-                  <TableCell className="text-right">{entry.favoriteType}</TableCell>
+                  <TableCell className="text-right">
+                    {entry.favoriteType}
+                  </TableCell>
                 </TableRow>
               ))
             )}
