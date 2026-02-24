@@ -56,12 +56,6 @@ export default function RankingPage() {
         title="Ranking"
         description="Descubre quién consume más Coca-Cola"
       />
-      {/* <div>
-        <h1 className="text-2xl font-bold mb-2">Ranking</h1>
-        <p className="text-muted-foreground">
-          Descubre quién consume más Coca-Cola
-        </p>
-      </div> */}
 
       <div className="flex gap-4">
         <PillSelector
