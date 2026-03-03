@@ -13,10 +13,13 @@ export default async function AppLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full">
+      <div className="flex min-h-screen w-full noir-bg">
         <AppSidebar username={username} />
-        <SidebarInset className="flex-1">
-          {children}
+        <SidebarInset className="flex-1 bg-transparent">
+          <div className="noise-overlay" />
+          <div className="relative z-10 p-4 md:p-6 lg:p-8">
+            {children}
+          </div>
         </SidebarInset>
       </div>
     </SidebarProvider>

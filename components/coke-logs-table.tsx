@@ -53,13 +53,15 @@ export function CokeLogsTable({ logs }: CokeLogsTableProps) {
 
   if (logs.length === 0) {
     return (
-      <Card>
+      <Card className="card-noir border-white/5">
         <CardHeader>
-          <CardTitle>Recent Entries</CardTitle>
-          <CardDescription>Your latest Coke log entries</CardDescription>
+          <CardTitle className="text-white">Recent Entries</CardTitle>
+          <CardDescription className="text-white/40">
+            Your latest Coke log entries
+          </CardDescription>
         </CardHeader>
         <CardContent className="py-10 text-center">
-          <p className="text-muted-foreground">
+          <p className="text-white/40">
             No entries yet. Add your first Coke!
           </p>
         </CardContent>
@@ -69,34 +71,34 @@ export function CokeLogsTable({ logs }: CokeLogsTableProps) {
 
   return (
     <>
-      <Card>
+      <Card className="card-noir border-white/5">
         <CardHeader>
-          <CardTitle>Recent Entries</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">Recent Entries</CardTitle>
+          <CardDescription className="text-white/40">
             Showing {logs.length} most recent {logs.length === 1 ? "entry" : "entries"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Type</TableHead>
-                <TableHead>Format</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Consumed</TableHead>
-                <TableHead>Visibility</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+              <TableRow className="border-white/10 hover:bg-transparent">
+                <TableHead className="text-white/60">Type</TableHead>
+                <TableHead className="text-white/60">Format</TableHead>
+                <TableHead className="text-white/60">Size</TableHead>
+                <TableHead className="text-white/60">Consumed</TableHead>
+                <TableHead className="text-white/60">Visibility</TableHead>
+                <TableHead className="text-right text-white/60">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {logs.map((log) => (
-                <TableRow key={log.id}>
-                  <TableCell className="font-medium capitalize">
+                <TableRow key={log.id} className="border-white/5 hover:bg-white/5">
+                  <TableCell className="font-medium capitalize text-white">
                     {log.cokeType}
                   </TableCell>
-                  <TableCell className="capitalize">{log.format}</TableCell>
-                  <TableCell>{log.sizeML}ml</TableCell>
-                  <TableCell>
+                  <TableCell className="capitalize text-white/70">{log.format}</TableCell>
+                  <TableCell className="text-white/70">{log.sizeML}ml</TableCell>
+                  <TableCell className="text-white/70">
                     {formatDistanceToNow(new Date(log.consumedAt), {
                       addSuffix: true,
                     })}
@@ -107,7 +109,7 @@ export function CokeLogsTable({ logs }: CokeLogsTableProps) {
                       size="sm"
                       onClick={() => handleTogglePrivacy(log.id)}
                       disabled={togglingId === log.id}
-                      className="h-8 w-8 p-0"
+                      className="h-8 w-8 p-0 text-white/40 hover:text-white hover:bg-white/10"
                     >
                       {log.isPublic ? (
                         <Eye className="h-4 w-4" />
@@ -124,7 +126,7 @@ export function CokeLogsTable({ logs }: CokeLogsTableProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0"
+                        className="h-8 w-8 p-0 text-white/40 hover:text-white hover:bg-white/10"
                         onClick={() => {
                           toast.info("Edit feature coming soon!");
                         }}
@@ -135,7 +137,7 @@ export function CokeLogsTable({ logs }: CokeLogsTableProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                        className="h-8 w-8 p-0 text-red-400/60 hover:text-red-400 hover:bg-red-400/10"
                         onClick={() => handleDeleteClick(log.id)}
                       >
                         <Trash2 className="h-4 w-4" />

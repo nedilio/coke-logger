@@ -12,12 +12,11 @@ export function AppHeader({ title, description, actions }: AppHeaderProps) {
   return (
     <header className="flex flex-wrap items-start md:items-center justify-between gap-4 mb-8">
       <div className="flex items-start gap-4 flex-1 min-w-0">
-        {/* Mobile sidebar trigger - only visible on mobile */}
-        <SidebarTrigger className="md:hidden mt-1" />
+        <SidebarTrigger className="md:hidden mt-1 text-white/60 hover:text-white hover:bg-white/10" />
         <div className="flex-1 min-w-0">
-          <h1 className="text-3xl font-bold">{title}</h1>
+          <h1 className="text-3xl font-bold text-white">{title}</h1>
           {description && (
-            <p className="text-muted-foreground mt-1">{description}</p>
+            <p className="text-white/40 mt-1">{description}</p>
           )}
         </div>
       </div>

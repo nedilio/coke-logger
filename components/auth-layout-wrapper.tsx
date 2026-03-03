@@ -11,11 +11,12 @@ export function AuthLayoutWrapper({
   showBackButton = true 
 }: AuthLayoutWrapperProps) {
   return (
-    <div className="relative min-h-screen gradient-bg overflow-x-hidden text-white">
+    <div className="relative min-h-screen noir-bg overflow-x-hidden text-white">
+      <div className="noise-overlay" />
       <BubblesBg />
       {showBackButton && <BackToHomeButton />}
       <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md fade-in-up">
           {children}
         </div>
       </div>

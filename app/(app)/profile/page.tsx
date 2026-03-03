@@ -1,19 +1,36 @@
+import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
 import ProfileForm from "@/components/profile-form";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getUserFollowCounts } from "@/server/follows";
+import { db } from "@/db/drizzle";
+import { user } from "@/db/schemas";
+import { eq } from "drizzle-orm";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ProfileLoading } from "./profile-loading";
 import Link from "next/link";
+
+function optimizeImageUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  return url.replace("/f/", "/a/");
+}
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) {
-    return <>Loading</>;
+    return <ProfileLoading />;
   }
 
-  const user = session.user;
-  const { image, name, username } = user;
-  const followCounts = await getUserFollowCounts(user.id);
+  const userData = await db.query.user.findFirst({
+    where: eq(user.id, session.user.id),
+  });
+
+  const { name, username, image: authImage } = session.user;
+  const profileImageUrl = userData?.profileImageUrl;
+  const displayImage = optimizeImageUrl(profileImageUrl || authImage || null);
+  const followCounts = await getUserFollowCounts(session.user.id);
 
   return (
     <div className="container mx-auto p-6 max-w-3xl space-y-6">
@@ -21,17 +38,12 @@ export default async function ProfilePage() {
 
       <main>
         <div className="flex items-start gap-6">
-          {image ? (
-            <img
-              src={image}
-              alt={`${name}'s profile picture`}
-              className="w-24 h-24 rounded-full"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center text-xl font-bold text-gray-600">
+          <Avatar className="w-24 h-24 border-2 border-border">
+            <AvatarImage src={displayImage || undefined} alt={`${name}'s profile picture`} />
+            <AvatarFallback className="text-xl">
               {name?.charAt(0).toUpperCase()}
-            </div>
-          )}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex-1">
             <h2 className="text-2xl font-bold">{name}</h2>
             <p className="text-muted-foreground">@{username || "sin username"}</p>
@@ -59,7 +71,9 @@ export default async function ProfilePage() {
         </div>
 
         <div className="mt-6">
-          <ProfileForm />
+          <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+            <ProfileForm />
+          </Suspense>
         </div>
       </main>
     </div>

@@ -14,6 +14,7 @@ export const user = pgTable("user", {
     .notNull(),
   username: text("username").unique(),
   displayUsername: text("display_username"),
+  profileImageUrl: text("profile_image_url"),
 });
 
 export const session = pgTable(

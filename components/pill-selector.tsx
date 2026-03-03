@@ -43,12 +43,12 @@ export function PillSelector({
               aria-checked={isSelected}
               onClick={() => onChange(option.value)}
               className={cn(
-                "flex-1 min-w-20 px-4 py-2 rounded-full text-sm font-medium transition-all",
-                "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                "flex-1 min-w-20 px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200",
+                "focus-visible:ring-2 focus-visible:ring-[#DC2626] focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 "outline-none",
                 isSelected
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+                  ? "bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30"
+                  : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20",
               )}
             >
               {option.label}
@@ -56,7 +56,7 @@ export function PillSelector({
           );
         })}
       </div>
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && <p className="text-sm text-red-400">{error}</p>}
     </div>
   );
 }
