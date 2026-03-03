@@ -15,34 +15,34 @@ export function BubblesBg() {
   const hasInitializedRef = useRef(false);
 
   useEffect(() => {
-    // Generate initial bubbles on client only (avoids hydration mismatch)
-    if (!hasInitializedRef.current) {
-      hasInitializedRef.current = true;
-      const initialBubbles: Bubble[] = Array.from({ length: 18 }, (_, i) => ({
-        id: i,
-        left: `${Math.random() * 100}%`,
-        width: Math.random() * 40 + 20, // 20-60px
-        delay: Math.random() * 4,
-        duration: Math.random() * 2 + 3, // 3-5s
-      }));
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Initial state must be set client-side to prevent SSR hydration mismatch
+    if (hasInitializedRef.current) return;
+    hasInitializedRef.current = true;
+    
+    const initialBubbles: Bubble[] = Array.from({ length: 15 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      width: Math.random() * 30 + 10,
+      delay: Math.random() * 4,
+      duration: Math.random() * 3 + 4,
+    }));
+    
+    // Use requestAnimationFrame to avoid direct setState in effect
+    requestAnimationFrame(() => {
       setBubbles(initialBubbles);
-    }
+    });
 
-    // Create new bubbles periodically
     const interval = setInterval(() => {
       setBubbles((prev) => {
         const newBubble: Bubble = {
           id: Date.now(),
           left: `${Math.random() * 100}%`,
-          width: Math.random() * 40 + 20,
+          width: Math.random() * 30 + 10,
           delay: 0,
-          duration: Math.random() * 2 + 3,
+          duration: Math.random() * 3 + 4,
         };
-        // Keep max 20 bubbles
-        return [...prev.slice(-19), newBubble];
+        return [...prev.slice(-14), newBubble];
       });
-    }, 2000);
+    }, 2500);
 
     return () => clearInterval(interval);
   }, []);
@@ -52,16 +52,36 @@ export function BubblesBg() {
       {bubbles.map((bubble) => (
         <div
           key={bubble.id}
-          className="bubble"
+          className="absolute rounded-full"
           style={{
             left: bubble.left,
             width: `${bubble.width}px`,
             height: `${bubble.width}px`,
             animationDelay: `${bubble.delay}s`,
             animationDuration: `${bubble.duration}s`,
+            background: `radial-gradient(circle at 30% 30%, oklch(62.8% 0.25 25 / 30%), transparent)`,
+            animation: 'riseNeoNoir 6s ease-in infinite',
           }}
         />
       ))}
+      <style jsx>{`
+        @keyframes riseNeoNoir {
+          0% {
+            bottom: -50px;
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.6;
+          }
+          90% {
+            opacity: 0.6;
+          }
+          100% {
+            bottom: 100%;
+            opacity: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }

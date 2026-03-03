@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="container mx-auto px-2 sm:px-4 space-y-6 sm:space-y-8">
       <AppHeader
         title="Dashboard"
         description="Tus datos de consumo de cokita en un vistazo"

@@ -68,7 +68,9 @@ export default function ProfileForm() {
   return (
     <form onSubmit={handleSubmit}>
       <Field>
-        <FieldLabel htmlFor="picture">Foto de perfil</FieldLabel>
+        <FieldLabel htmlFor="picture">
+          Foto de perfil (pronto, no funciona por los momentos)
+        </FieldLabel>
         <input
           ref={fileInputRef}
           id="picture"
@@ -76,6 +78,7 @@ export default function ProfileForm() {
           accept="image/*"
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-secondary file:text-secondary-foreground file:me-4 file:rounded-md file:px-4 file:text-sm file:font-medium file:ring-2 file:ring-ring file:ring-offset-2"
           onChange={handleFileChange}
+          disabled
         />
         <FieldDescription>
           Selecciona una imagen para tu perfil (máx 4MB)
@@ -92,7 +95,8 @@ export default function ProfileForm() {
         </div>
       )}
 
-      <Button type="submit" disabled={isSaving || !previewUrl} className="mt-4">
+      <Button type="submit" disabled className="mt-4">
+        {/* <Button type="submit" disabled={isSaving || !previewUrl} className="mt-4"> */}
         {isSaving ? "Guardando..." : "Guardar"}
       </Button>
     </form>

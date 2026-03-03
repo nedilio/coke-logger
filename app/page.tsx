@@ -22,7 +22,8 @@ export default async function Home() {
   await redirectIfAuthenticated();
 
   return (
-    <div className="relative min-h-screen gradient-bg overflow-x-hidden text-white">
+    <div className="relative min-h-screen noir-bg overflow-x-hidden text-white">
+      <div className="noise-overlay" />
       <BubblesBg />
       <HeroSection />
       <FeaturesSection />

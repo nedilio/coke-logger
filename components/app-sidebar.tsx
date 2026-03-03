@@ -28,7 +28,6 @@ export function AppSidebar({ username }: AppSidebarProps) {
   const pathname = usePathname();
   const { setOpenMobile, isMobile } = useSidebar();
 
-  // Close mobile sidebar when navigating to a new page
   useEffect(() => {
     if (isMobile) {
       setOpenMobile(false);
@@ -43,16 +42,16 @@ export function AppSidebar({ username }: AppSidebarProps) {
   ];
 
   return (
-    <Sidebar>
+    <Sidebar className="bg-[oklch(0.06_0_0)] border-r border-white/10">
       <SidebarHeader>
         <div className="px-4 py-2">
-          <h2 className="text-lg font-bold text-primary">Coke Logger</h2>
+          <h2 className="text-lg font-bold text-gradient">Coke Logger</h2>
         </div>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navegación</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-white/40">Navegación</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
@@ -61,7 +60,15 @@ export function AppSidebar({ username }: AppSidebarProps) {
 
                 return (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      className={`transition-all duration-200 ${
+                        isActive
+                          ? "bg-[#DC2626]/20 text-[#DC2626] hover:bg-[#DC2626]/20"
+                          : "text-white/60 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
                       <Link href={item.href}>
                         <Icon className="h-4 w-4" />
                         <span>{item.label}</span>
@@ -76,12 +83,16 @@ export function AppSidebar({ username }: AppSidebarProps) {
       </SidebarContent>
 
       <SidebarFooter>
-        <div className="p-4 space-y-2">
-          <p className="text-sm text-muted-foreground">
-            Conectado como <span className="font-medium">{username}</span>
+        <div className="p-4 space-y-3">
+          <p className="text-sm text-white/40">
+            Conectado como <span className="font-medium text-white/60">{username}</span>
           </p>
           <form action={signOutAction} className="w-full">
-            <Button variant="outline" size="sm" className="w-full">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full border-white/10 text-white/60 hover:text-white hover:bg-white/5 hover:border-white/20 transition-all duration-200"
+            >
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
             </Button>

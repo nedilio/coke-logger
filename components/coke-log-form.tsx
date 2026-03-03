@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Image from "next/image";
+// import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -172,17 +172,19 @@ export function CokeLogForm() {
   }
 
   return (
-    <Card>
+    <Card className="card-noir border-white/5">
       <CardHeader>
-        <CardTitle>Agregar nuevo registro de Coca-Cola</CardTitle>
-        <CardDescription>Registra tu consumo de Coca-Cola</CardDescription>
+        <CardTitle className="text-white">Agregar nuevo registro de Coca-Cola</CardTitle>
+        <CardDescription className="text-white/40">Registra tu consumo de Coca-Cola</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-3 sm:px-6">
         <form onSubmit={handleSubmit}>
-          <FieldGroup>
+          <FieldGroup className="[&_textarea:bg-white/5 [&_textarea]:border-white/10 [&_textarea]:text-white [&_textarea::placeholder]:text-white/30">
             {/* Tipo de Coca-Cola */}
             <Field>
-              <FieldLabel>Tipo de Coca-Cola *</FieldLabel>
+              <FieldLabel className="text-white/80">
+                Tipo de Coca-Cola *
+              </FieldLabel>
               <PillSelector
                 name="cokeType"
                 options={COKE_TYPE_OPTIONS}
@@ -197,7 +199,7 @@ export function CokeLogForm() {
 
             {/* Formato */}
             <Field>
-              <FieldLabel>Formato *</FieldLabel>
+              <FieldLabel className="text-white/80">Formato *</FieldLabel>
               <PillSelector
                 name="format"
                 options={FORMAT_OPTIONS}
@@ -212,7 +214,7 @@ export function CokeLogForm() {
 
             {/* Tamaño en ML */}
             <Field>
-              <FieldLabel>Tamaño *</FieldLabel>
+              <FieldLabel className="text-white/80">Tamaño *</FieldLabel>
               <PillSelector
                 name="size"
                 options={SIZE_OPTIONS}
@@ -257,14 +259,16 @@ export function CokeLogForm() {
                       });
                     }}
                   />
-                  <span className="text-sm text-muted-foreground">ml</span>
+                  <span className="text-sm text-white/40">ml</span>
                 </div>
               ) : null}
             </Field>
 
             {/* Consumido en */}
             <Field>
-              <FieldLabel>¿Cuándo tomaste cokita? *</FieldLabel>
+              <FieldLabel className="text-white/80">
+                ¿Cuándo tomaste cokita? *
+              </FieldLabel>
               <PillSelector
                 name="consumedAt"
                 options={CONSUMED_AT_OPTIONS}
@@ -311,7 +315,9 @@ export function CokeLogForm() {
 
             {/* Notas */}
             <Field>
-              <FieldLabel htmlFor="notes">Notas (opcional)</FieldLabel>
+              <FieldLabel htmlFor="notes" className="text-white/80">
+                Notas (opcional)
+              </FieldLabel>
               <Textarea
                 id="notes"
                 name="notes"
@@ -326,16 +332,16 @@ export function CokeLogForm() {
                 maxLength={250}
                 rows={3}
               />
-              <p className="text-xs text-muted-foreground text-right mt-1">
+              <p className="text-xs text-white/30 text-right mt-1">
                 {formData.notes.length}/250 caracteres
               </p>
             </Field>
 
             {/* Foto (opcional) */}
-            <Field>
-              <FieldLabel>Foto (opcional)</FieldLabel>
+            {/* <Field>
+              <FieldLabel className="text-white/80">Foto (opcional)</FieldLabel>
               {formData.imageUrl ? (
-                <div className="relative w-32 h-32 rounded-lg overflow-hidden border border-border">
+                <div className="relative w-32 h-32 rounded-lg overflow-hidden border border-white/10">
                   <Image
                     src={formData.imageUrl}
                     alt="Foto del coke"
@@ -351,8 +357,8 @@ export function CokeLogForm() {
                   </button>
                 </div>
               ) : (
-                <label className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary transition-colors">
-                  <span className="text-sm text-muted-foreground">+ Foto</span>
+                <label className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-[#DC2626]/50 transition-colors">
+                  <span className="text-sm text-white/40">+ Foto</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -367,15 +373,18 @@ export function CokeLogForm() {
                   />
                 </label>
               )}
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-white/30 mt-1">
                 Agrega una foto de tu bebida (máx 4MB)
               </p>
-            </Field>
+            </Field> */}
 
             {/* Es público */}
             <Field>
               <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="isPublic" className="cursor-pointer">
+                <FieldLabel
+                  htmlFor="isPublic"
+                  className="cursor-pointer text-white/80"
+                >
                   Hacer esta entrada pública
                 </FieldLabel>
                 <Switch
@@ -390,7 +399,11 @@ export function CokeLogForm() {
 
             {/* Botón de envío */}
             <Field>
-              <Button type="submit" disabled={isSubmitting} className="w-full">
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full glow-red"
+              >
                 {isSubmitting ? "Agregando..." : "Agregar entrada"}
               </Button>
             </Field>
