@@ -41,7 +41,7 @@ export function calculateDashboardStats(logs: CokeLog[]): DashboardStats {
   }
 
   const favoriteType = calculateMode(cokeTypes) || "None";
-  const favoriteSizeML = (calculateMode(sizes) as number | undefined) || 0;
+  const favoriteSizeML = Number(calculateMode(sizes)) || 0;
 
   return {
     totalLogs,
