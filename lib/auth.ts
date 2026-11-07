@@ -9,6 +9,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  // Needed by the iOS app: App Store rules require in-app account deletion.
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
   database: drizzleAdapter(db, { provider: "pg", schema }),
   plugins: [
     bearer(),
