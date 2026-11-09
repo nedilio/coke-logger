@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ProfileLoading } from "./profile-loading";
 import Link from "next/link";
+import { DeleteAccountSection } from "@/components/delete-account-section";
 
 function optimizeImageUrl(url: string | null | undefined): string | undefined {
   if (!url) return undefined;
@@ -74,6 +75,10 @@ export default async function ProfilePage() {
           <Suspense fallback={<Skeleton className="h-64 w-full" />}>
             <ProfileForm />
           </Suspense>
+        </div>
+
+        <div className="mt-10">
+          <DeleteAccountSection />
         </div>
       </main>
     </div>
