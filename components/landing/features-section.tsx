@@ -5,22 +5,22 @@ const features = [
     icon: BarChart3,
     title: "Estadísticas Detalladas",
     description: "Ve cuántos litros tomas al mes, qué formato prefieres y tu evolución en el tiempo",
-    color: "text-[#00f5ff]",
-    borderColor: "hover:border-[#00f5ff]/30",
+    color: "text-coke-bright",
+    borderColor: "hover:border-coke-bright/30",
   },
   {
     icon: Target,
     title: "Tracking Simple",
     description: "Registra en segundos: tipo, formato y tamaño. Así de fácil.",
-    color: "text-[#ff00ff]",
-    borderColor: "hover:border-[#ff00ff]/30",
+    color: "text-coke-red",
+    borderColor: "hover:border-coke-red/30",
   },
   {
     icon: Trophy,
     title: "Descubre Patrones",
     description: "¿Tomas más en fin de semana? ¿Prefieres lata o botella? Conoce tus hábitos",
-    color: "text-[#39ff14]",
-    borderColor: "hover:border-[#39ff14]/30",
+    color: "text-white",
+    borderColor: "hover:border-white/30",
   },
 ];
 

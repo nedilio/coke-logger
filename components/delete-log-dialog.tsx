@@ -58,7 +58,7 @@ export function DeleteLogDialog({
           <AlertDialogAction
             onClick={handleDelete}
             disabled={isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-none bg-destructive text-destructive-foreground shadow-none hover:bg-destructive/90"
           >
             {isDeleting ? "Deleting..." : "Delete"}
           </AlertDialogAction>

@@ -82,17 +82,17 @@ export function CokeLogsTable({ logs }: CokeLogsTableProps) {
           <Table>
             <TableHeader>
               <TableRow className="border-white/10 hover:bg-transparent">
-                <TableHead className="text-white/60">Type</TableHead>
-                <TableHead className="text-white/60">Format</TableHead>
-                <TableHead className="text-white/60">Size</TableHead>
-                <TableHead className="text-white/60">Consumed</TableHead>
-                <TableHead className="text-white/60">Visibility</TableHead>
-                <TableHead className="text-right text-white/60">Actions</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">Type</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">Format</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">Size</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">Consumed</TableHead>
+                <TableHead className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">Visibility</TableHead>
+                <TableHead className="text-right text-[11px] font-semibold uppercase tracking-[0.15em] text-white/50">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {logs.map((log) => (
-                <TableRow key={log.id} className="border-white/5 hover:bg-white/5">
+                <TableRow key={log.id} className="border-white/5 hover:bg-coke-red/10 transition-colors">
                   <TableCell className="font-medium capitalize text-white">
                     {log.cokeType}
                   </TableCell>

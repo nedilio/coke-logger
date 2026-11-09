@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { deleteAccountSchema, type DeleteAccountInput } from "@/lib/validations/account";
 
 export interface SignUpResponse {
   error?: string;
@@ -92,6 +93,41 @@ export const signInAction = async (
   }
 
   redirect("/dashboard");
+};
+
+export interface DeleteAccountResponse {
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Permanently deletes the signed-in user's account. Better Auth verifies the
+ * password, deletes the user + sessions and clears the session cookie; coke
+ * logs and follows are removed by the `onDelete: "cascade"` foreign keys.
+ */
+export const deleteAccountAction = async (
+  input: DeleteAccountInput,
+): Promise<DeleteAccountResponse> => {
+  const parsed = deleteAccountSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+
+  try {
+    await auth.api.deleteUser({
+      body: { password: parsed.data.password },
+      headers: await headers(),
+    });
+  } catch (error) {
+    console.error("Delete account error:", error);
+    const message = error instanceof Error ? error.message.toLowerCase() : "";
+    if (message.includes("password")) {
+      return { success: false, error: "La contraseña no es correcta" };
+    }
+    return { success: false, error: "No pudimos eliminar tu cuenta. Inténtalo de nuevo." };
+  }
+
+  return { success: true };
 };
 
 export const signOutAction = async () => {

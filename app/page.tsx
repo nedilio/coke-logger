@@ -3,6 +3,7 @@ import { BubblesBg } from "@/components/landing/bubbles-bg";
 import { HeroSection } from "@/components/landing/hero-section";
 import { FeaturesSection } from "@/components/landing/features-section";
 import { HowItWorks } from "@/components/landing/how-it-works";
+import { IosAppSection } from "@/components/landing/ios-app-section";
 import { CTASection } from "@/components/landing/cta-section";
 import { Footer } from "@/components/landing/footer";
 
@@ -28,6 +29,7 @@ export default async function Home() {
       <HeroSection />
       <FeaturesSection />
       <HowItWorks />
+      <IosAppSection />
       <CTASection />
       <Footer />
     </div>
