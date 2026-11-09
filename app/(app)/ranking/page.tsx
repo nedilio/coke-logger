@@ -1,14 +1,6 @@
 "use client";
 
 import { useState, useEffect, useTransition, useMemo } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { PillSelector } from "@/components/pill-selector";
 import {
   getRankingAction,
@@ -18,6 +10,7 @@ import {
   type RankingFilter,
 } from "@/server/ranking";
 import { AppHeader } from "@/components/app-header";
+import { cn } from "@/lib/utils";
 
 const FILTER_OPTIONS = [
   { value: "following", label: "Siguiendo" },
@@ -38,6 +31,10 @@ export default function RankingPage() {
 
   const filterOptions = useMemo(() => FILTER_OPTIONS, []);
   const periodOptions = useMemo(() => PERIOD_OPTIONS, []);
+  const maxML = useMemo(
+    () => ranking.reduce((max, entry) => Math.max(max, entry.totalML), 0),
+    [ranking],
+  );
 
   useEffect(() => {
     startTransition(async () => {
@@ -73,55 +70,67 @@ export default function RankingPage() {
         onChange={(value) => setPeriod(value as RankingPeriod)}
       />
 
-      <p className="text-sm text-muted-foreground">{dateLabel}</p>
+      <p className="text-xs uppercase tracking-[0.2em] text-white/50">{dateLabel}</p>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="w-16">#</TableHead>
-              <TableHead>Usuario</TableHead>
-              <TableHead className="text-right">ML (L)</TableHead>
-              <TableHead className="text-right">Tipo</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isPending ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="text-center py-8 text-muted-foreground"
+      <div className="card-noir p-4 sm:p-6">
+        <div className="mb-4 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.2em] text-white/50">
+          <span>Usuario</span>
+          <span>Total</span>
+        </div>
+
+        {isPending ? (
+          <p className="py-8 text-center text-white/50">Cargando...</p>
+        ) : ranking.length === 0 ? (
+          <p className="py-8 text-center text-white/50">
+            {filter === "following"
+              ? "No hay datos de usuarios que sigues. ¡Sigue a más personas!"
+              : "No hay datos para este período"}
+          </p>
+        ) : (
+          <ol className="space-y-3">
+            {ranking.map((entry) => {
+              const width =
+                maxML > 0 ? Math.max(8, Math.round((entry.totalML / maxML) * 100)) : 8;
+              const isPodium = entry.position <= 3;
+
+              return (
+                <li
+                  key={entry.position}
+                  className="grid grid-cols-[2rem_minmax(0,7rem)_1fr] sm:grid-cols-[2.5rem_minmax(0,10rem)_1fr] items-center gap-3"
                 >
-                  Cargando...
-                </TableCell>
-              </TableRow>
-            ) : ranking.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="text-center py-8 text-muted-foreground"
-                >
-                  {filter === "following"
-                    ? "No hay datos de usuarios que sigues. ¡Sigue a más personas!"
-                    : "No hay datos para este período"}
-                </TableCell>
-              </TableRow>
-            ) : (
-              ranking.map((entry) => (
-                <TableRow key={entry.position}>
-                  <TableCell className="font-medium">
+                  <span
+                    className={cn(
+                      "flex size-7 items-center justify-center rounded-full text-xs font-bold tabular-nums",
+                      isPodium
+                        ? "btn-coke text-white"
+                        : "bg-white/5 text-white/50 ring-1 ring-white/10",
+                    )}
+                  >
                     {entry.position}
-                  </TableCell>
-                  <TableCell>{entry.username}</TableCell>
-                  <TableCell className="text-right">{entry.totalL}</TableCell>
-                  <TableCell className="text-right">
-                    {entry.favoriteType}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold uppercase tracking-wide text-white">
+                      {entry.username}
+                    </p>
+                    <p className="truncate text-xs capitalize text-white/40">
+                      {entry.favoriteType}
+                    </p>
+                  </div>
+                  <div className="h-8 rounded-full bg-white/5">
+                    <div
+                      className="bar-coke flex h-full min-w-[4.5rem] items-center justify-end rounded-full px-3 transition-[width] duration-700 ease-out"
+                      style={{ width: `${width}%` }}
+                    >
+                      <span className="text-xs font-semibold text-white tabular-nums">
+                        {entry.totalL}
+                      </span>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        )}
       </div>
     </div>
   );

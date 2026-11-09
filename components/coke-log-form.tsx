@@ -357,7 +357,7 @@ export function CokeLogForm() {
                   </button>
                 </div>
               ) : (
-                <label className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-[#DC2626]/50 transition-colors">
+                <label className="flex items-center justify-center w-32 h-32 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-coke-red/50 transition-colors">
                   <span className="text-sm text-white/40">+ Foto</span>
                   <input
                     type="file"

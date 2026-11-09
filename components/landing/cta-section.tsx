@@ -14,7 +14,7 @@ export function CTASection() {
           </p>
           <Link
             href="/signup"
-            className="group inline-flex items-center gap-2 rounded-full bg-[#DC2626] px-8 py-4 text-lg font-bold text-white transition-all duration-300 hover:scale-105 glow-red fade-in-up stagger-2"
+            className="group inline-flex items-center gap-2 rounded-full btn-coke px-8 py-4 text-lg font-bold text-white transition-all duration-300 hover:scale-105 glow-red fade-in-up stagger-2"
           >
             <Rocket className="h-5 w-5" />
             Crear Cuenta Gratis

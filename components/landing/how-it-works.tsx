@@ -33,7 +33,7 @@ export function HowItWorks() {
               key={idx}
               className="card-noir group flex items-center gap-6 rounded-2xl p-8 transition-all duration-300 hover:scale-[1.02] border-glow fade-in-up stagger-2"
             >
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#DC2626] text-3xl font-bold text-white glow-red">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-coke-red text-3xl font-bold text-white glow-red">
                 {step.number}
               </div>
               <div>

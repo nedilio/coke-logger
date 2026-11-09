@@ -52,7 +52,7 @@ export function LoginForm({
         </CardHeader>
         <CardContent>
           <form action={action}>
-            <FieldGroup className="[&_input::placeholder]:text-white/40 [&_input]:bg-white/5 [&_input]:border-white/10 [&_input]:text-white [&_input:focus]:border-[#DC2626] [&_input:focus]:ring-[#DC2626]/30">
+            <FieldGroup className="[&_input::placeholder]:text-white/40 [&_input]:bg-white/5 [&_input]:border-white/10 [&_input]:text-white [&_input:focus]:border-coke-red [&_input:focus]:ring-coke-red/30">
               <Field>
                 <FieldLabel htmlFor="email" className="text-white/80">
                   Email
@@ -87,7 +87,7 @@ export function LoginForm({
                 <Input id="password" type="password" name="password" required />
               </Field>
               <Field>
-                <Button type="submit" className="w-full bg-[#DC2626] hover:bg-[#B91C1C] glow-red transition-all duration-300" disabled={pending}>
+                <Button type="submit" className="w-full btn-coke transition-all duration-300" disabled={pending}>
                   {pending ? "Iniciando sesión..." : "Iniciar sesión"}
                 </Button>
                 <FieldDescription className="text-center text-white/60">

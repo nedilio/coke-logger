@@ -44,10 +44,10 @@ export function PillSelector({
               onClick={() => onChange(option.value)}
               className={cn(
                 "flex-1 min-w-20 px-4 py-2 rounded-lg text-xs font-medium transition-all duration-200",
-                "focus-visible:ring-2 focus-visible:ring-[#DC2626] focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                "focus-visible:ring-2 focus-visible:ring-coke-red focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 "outline-none",
                 isSelected
-                  ? "bg-[#DC2626] text-white shadow-lg shadow-[#DC2626]/30"
+                  ? "btn-coke text-white"
                   : "bg-white/5 text-white/60 border border-white/10 hover:bg-white/10 hover:text-white hover:border-white/20",
               )}
             >
