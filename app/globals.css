@@ -314,6 +314,13 @@
   }
 }
 
+/* Float only on md+ (avoids overlapping stacked content on mobile) */
+@media (min-width: 48rem) {
+  .float-md {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
 /* Float with rotation */
 .float-rotate {
   animation: floatRotate 8s ease-in-out infinite;

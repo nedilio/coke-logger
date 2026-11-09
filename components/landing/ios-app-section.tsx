@@ -23,9 +23,9 @@ function PhoneMockup(): React.ReactElement {
   const offset = RING_CIRCUMFERENCE * (1 - DEMO_PERCENT / 100);
 
   return (
-    <div className="relative mx-auto w-60 sm:w-64 float" aria-hidden>
-      <div className="absolute inset-0 -z-10 rounded-[3rem] bg-coke-red/40 blur-3xl" />
-      <div className="rounded-[2.8rem] bg-gradient-to-b from-white/25 to-white/5 p-[3px] shadow-2xl">
+    <div className="relative isolate mx-auto mt-6 w-60 sm:w-64 md:mt-0" aria-hidden>
+      <div className="absolute inset-0 -z-10 rounded-[3rem] bg-coke-red/30 blur-3xl" />
+      <div className="float-md rounded-[2.8rem] bg-gradient-to-b from-white/25 to-white/5 p-[3px] shadow-2xl">
         <div className="relative overflow-hidden rounded-[2.65rem] bg-coke-ink">
           {/* Dynamic Island */}
           <div className="absolute left-1/2 top-3 z-10 h-6 w-20 -translate-x-1/2 rounded-full bg-black" />
@@ -84,8 +84,8 @@ function PhoneMockup(): React.ReactElement {
 
 export function IosAppSection(): React.ReactElement {
   return (
-    <section id="ios" className="relative z-10 px-6 py-20">
-      <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-2">
+    <section id="ios" className="relative z-10 scroll-mt-8 px-6 py-16 md:py-24">
+      <div className="mx-auto grid max-w-6xl items-center gap-16 md:grid-cols-2 md:gap-12">
         <div className="text-center md:text-left">
           <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-coke-red/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-coke-bright ring-1 ring-coke-red/30">
             Muy pronto
@@ -98,7 +98,7 @@ export function IosAppSection(): React.ReactElement {
             tu cokita al momento, sin abrir el navegador.
           </p>
 
-          <ul className="mb-10 space-y-3 text-left">
+          <ul className="mx-auto mb-10 max-w-sm space-y-3 text-left md:mx-0">
             {BENEFITS.map((benefit) => (
               <li key={benefit} className="flex items-center gap-3 text-white/80">
                 <span className="flex size-6 shrink-0 items-center justify-center rounded-full btn-coke">
@@ -111,14 +111,14 @@ export function IosAppSection(): React.ReactElement {
 
           <div
             aria-disabled
-            className="inline-flex cursor-not-allowed items-center gap-3 rounded-xl border border-white/15 bg-black/60 px-5 py-3 text-left opacity-80"
+            className="relative z-10 inline-flex cursor-not-allowed items-center gap-3 rounded-2xl border border-white/20 bg-black px-6 py-3.5 text-left shadow-lg shadow-black/40"
           >
             <AppleLogo className="size-7" />
             <span>
-              <span className="block text-[10px] uppercase tracking-wider text-white/60">
+              <span className="block text-[10px] uppercase leading-none tracking-wider text-white/60">
                 Próximamente en
               </span>
-              <span className="block font-display text-lg font-semibold leading-tight">
+              <span className="mt-1 block font-display text-lg font-semibold leading-none">
                 App Store
               </span>
             </span>
